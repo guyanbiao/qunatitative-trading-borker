@@ -32,3 +32,5 @@
 .env.development
 .idea/
 .rakeTasks
+*.swp
+*.swo
