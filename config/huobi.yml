@@ -1,0 +1,6 @@
+test:
+  host: 'huobi.test.com'
+development:
+  host: 'api.hbdm.com'
+production:
+  host: 'api.hbdm.com'

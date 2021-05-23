@@ -62,3 +62,14 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'httparty'
+gem 'aasm'
+
+group :development, :test do
+  gem 'rspec-rails', '~> 5.0.0'
+end
+
+group :test do
+  gem 'webmock'
+  gem 'vcr'
+  gem 'database_cleaner-active_record'
+end
