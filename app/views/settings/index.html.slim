@@ -6,8 +6,8 @@ table.table
       td secret_key
   tbody
     tr
-      td #{Setting.huobi_access_key.to_s.last(6)}
-      td #{Setting.huobi_secret_key.to_s.last(6)}
+      td xxxxxxxxx#{Setting.huobi_access_key.to_s.last(3)}
+      td xxxxxxxxx#{Setting.huobi_secret_key.to_s.last(3)}
 = form_for :settings, url: '/settings', html: {class: 'form'} do
   div.form-group
     = text_field_tag :access_key, nil, placeholder: 'access_key', class: 'form_control'
