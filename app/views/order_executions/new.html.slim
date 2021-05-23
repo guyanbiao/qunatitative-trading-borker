@@ -1,0 +1,7 @@
+h1 下单
+= form_for @order_execution do |f|
+  = f.select :direction, [['开多', 'buy'], ['开空', 'sell']], {}, class: 'custom-select', placeholder: '方向'
+  br
+  = f.text_field :currency, placeholder: '币种 BTC,ETH'
+  br
+  = f.submit '提交'

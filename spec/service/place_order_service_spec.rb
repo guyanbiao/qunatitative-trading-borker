@@ -1,10 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe PlaceOrderService do
-  it 'open first order' do
+  before :each do
     stub_price_limit
     stub_place_order
     stub_order_info
+    stub_contract_info
+  end
+
+  it 'open first order' do
 
     order_execution = OrderExecution.create(
       currency: 'BTC',
@@ -24,9 +28,7 @@ RSpec.describe PlaceOrderService do
   end
 
   it 'has open order' do
-    stub_price_limit
-    stub_place_order
-    stub_order_info
+    expect(PlaceOrderService::DEFAULT_PERCENTAGE).to eq(0.05.to_d)
     first_order = UsdtStandardOrder.create(
       volume: 3,
       client_order_id: 3323,
@@ -150,6 +152,15 @@ RSpec.describe PlaceOrderService do
     stub_request(:post, r).to_return(
       status: 200,
       body: file_fixture('swap_cross_order_info.json'),
+      headers: {}
+    )
+  end
+
+  def stub_contract_info
+    r = Regexp.new( "https://huobi.test.com/linear-swap-api/v1/swap_contract_info\\?.*" )
+    stub_request(:get, r).to_return(
+      status: 200,
+      body: file_fixture('swap_contract_info.json'),
       headers: {}
     )
   end

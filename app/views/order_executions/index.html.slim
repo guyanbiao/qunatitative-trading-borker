@@ -1,0 +1,20 @@
+= link_to'新订单', new_order_execution_path, class: 'btn btn-primary'
+
+table.table
+  thead
+    tr
+      th ID
+      th status
+      th 币对
+      th 方向
+      th 操作
+  tbody
+    - @order_executions.each do |o|
+      tr
+        td #{o.id}
+        td #{o.status}
+        td #{o.currency}
+        td #{o.direction}
+        td
+          = link_to '详情', order_execution_path(o.id), class: 'btn'
+= paginate @order_executions

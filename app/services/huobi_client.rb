@@ -4,8 +4,8 @@ class HuobiClient
   end
 
   def initialize
-    @access_key = ENV['HUOBI_ACESS_KEY']
-    @secret_key = ENV['HUOBI_SECRET_KEY']
+    @access_key = Setting.huobi_access_key
+    @secret_key = Setting.huobi_secret_key
     @signature_version = '2'
     #@host = "api.huobi.pro"
     @host = HuobiClient.host

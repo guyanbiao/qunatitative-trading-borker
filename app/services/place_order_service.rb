@@ -13,13 +13,14 @@ class PlaceOrderService
   # 收益率达到200% 再止盈本金的 10%， 以此类推止盈到500%。
   # 比如开仓资金100U 当收益率达到100%止盈本金的10%（10U）。200%时再次止盈本金的10%（10U）
   # 以此类推到 500%.  剩下的仓位 就随指标的提示去操作。
-  DEFAULT_PERCENTAGE = 0.05.to_d
+  # TODO !!!!!!!!!! change it back to 0.05
+  DEFAULT_PERCENTAGE = 0.5.to_d
   MAX_CONTINUOUS_FAILURE_TIMES = 5
 
   attr_reader :order_execution, :currency, :request_direction
   def initialize(order_execution)
     @order_execution = order_execution
-    @currency = order_execution.currency
+    @currency = order_execution.currency.upcase
     @request_direction = order_execution.direction
   end
 
@@ -29,10 +30,12 @@ class PlaceOrderService
     case order_execution.status.to_sym
     when :created
       handle_created
+    when :new_order
+      handle_close_order_finished
     when :close_order_placed
       client_order_id = UsdtStandardOrder.where(
         order_execution_id: order_execution.id,
-        offset: 'open'
+        offset: 'close'
       ).last.client_order_id
       handle_close_order_placed(client_order_id)
     when :close_order_finished
@@ -95,7 +98,7 @@ class PlaceOrderService
         order_execution.close_finish
         order_execution.save!
         close_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
-        open_order = close_order.parent_order
+        open_order = last_order
         open_order.finish
         open_order.assign_attributes(
           profit: data['profit'],
@@ -130,9 +133,9 @@ class PlaceOrderService
     end
   end
 
-  private
+  #private
   def has_position?
-    last_order && last_order.status == 'processing'
+    @has_position ||= last_order && last_order.status == 'processing'
   end
 
   def remote_orders_count
@@ -162,7 +165,9 @@ class PlaceOrderService
           client_order_id: client_order_id,
           direction: opposite_direction,
           parent_order_id: last_order.id,
-          offset: 'close'
+          offset: 'close',
+          volume: last_order.volume,
+          lever_rate: last_order.lever_rate
         )
         order_execution.close
         order_execution.save!
@@ -177,6 +182,8 @@ class PlaceOrderService
   end
 
   def open_position(client_order_id)
+    lever_rate = get_lever_rate
+    volume = calculate_volume
     result = HuobiClient.new.contract_place_order(
       order_id: client_order_id,
       contract_code: contract_code,
@@ -199,7 +206,9 @@ class PlaceOrderService
           client_order_id: client_order_id,
           remote_order_id: result['data']['order_id'],
           direction: request_direction,
-          offset: 'open'
+          offset: 'open',
+          volume: volume,
+          lever_rate: lever_rate
         )
       end
       handle_open_order_placed(client_order_id)
@@ -209,7 +218,7 @@ class PlaceOrderService
     end
   end
 
-  def create_order!(client_order_id:, remote_order_id:, direction:, offset:, parent_order_id: nil)
+  def create_order!(client_order_id:, remote_order_id:, direction:, offset:, volume:, lever_rate:, parent_order_id: nil)
     UsdtStandardOrder.create!(
       volume: volume,
       client_order_id: client_order_id,
@@ -224,8 +233,8 @@ class PlaceOrderService
     )
   end
 
-  def volume
-    @volume ||= (balance / current_price * percentage).to_i
+  def calculate_volume
+    (balance  * percentage / contract_price).to_i
   end
 
   def balance
@@ -238,8 +247,16 @@ class PlaceOrderService
     end
   end
 
+  def contract_price
+    current_price * contract_unit_price
+  end
+
+  def contract_unit_price
+    client.contract_info(contract_code)['data'].last['contract_size'].to_d
+  end
+
   def current_price
-    result = HuobiClient.new.price_limit('BTC-USDT')
+    result = HuobiClient.new.price_limit("#{currency}-USDT")
     item = result['data'].find {|i| i['symbol'] == currency}
     raise "price not found #{result}" unless item
     item['high_limit'].to_d
@@ -268,7 +285,7 @@ class PlaceOrderService
     @last_order ||= UsdtStandardOrder.open.last
   end
 
-  def lever_rate
+  def get_lever_rate
     # TODO add settings
     5
   end
@@ -278,7 +295,7 @@ class PlaceOrderService
   end
 
   def contract_code
-    "#{currency.upcase}-USDT"
+    "#{currency}-USDT"
   end
 
   def client

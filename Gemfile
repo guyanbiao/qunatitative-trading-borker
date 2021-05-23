@@ -63,6 +63,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'httparty'
 gem 'aasm'
+gem 'slim'
 
 group :development, :test do
   gem 'rspec-rails', '~> 5.0.0'
@@ -72,4 +73,9 @@ group :test do
   gem 'webmock'
   gem 'vcr'
   gem 'database_cleaner-active_record'
+  gem 'simplecov', require: false
 end
+
+gem 'webpacker', '~> 5.0'
+gem 'kaminari'
+gem 'rails-settings-cached'

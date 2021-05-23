@@ -19,14 +19,13 @@ class UsdtStandardOrder < ApplicationRecord
   scope :close, -> {where(offset: 'close')}
 
   def profit?
-    if direction == 'buy'
-      close_price > open_price
-    else
-      open_price > close_price
-    end
+    real_profit > 0
   end
 
   def parent_order
     UsdtStandardOrder.find(parent_order_id)
+  end
+
+  def remote_status
   end
 end

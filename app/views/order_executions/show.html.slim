@@ -1,0 +1,57 @@
+- if @open_order
+  h1 开仓订单
+  table.table
+    thead
+      tr
+        th 类型
+        th 合约代码
+        th 下单价格
+        th 执行价格
+        th 合约张数
+        th 杠杆倍数
+        th 收益
+    tbody
+      tr
+        td #{@open_order.direction}
+        td #{@open_order.contract_code}
+        td #{@open_order.open_price}
+        td #{@open_order.close_price}
+        td #{@open_order.volume}
+        td #{@open_order.lever_rate}
+        td #{@open_order.real_profit}
+
+- if @close_order
+  h1 平仓订单
+  table.table
+    thead
+      tr
+        th 类型
+        th 合约代码
+        th 下单价格
+        th 执行价格
+        th 合约张数
+        th 杠杆倍数
+        th 收益
+    tbody
+      tr
+        td #{@close_order.direction}
+        td #{@close_order.contract_code}
+        td #{@close_order.open_price}
+        td #{@close_order.close_price}
+        td #{@close_order.volume}
+        td #{@close_order.lever_rate}
+        td #{@close_order.real_profit}
+
+h1 操作日志
+table.table
+  thead
+    tr
+      th ID
+      th 类型
+      th 日志
+  tbody
+    - @logs.each do |o|
+      tr
+        td #{o.id}
+        td #{o.action}
+        td #{o.response}

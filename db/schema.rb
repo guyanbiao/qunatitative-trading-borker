@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_23_000605) do
+ActiveRecord::Schema.define(version: 2021_05_23_084710) do
 
   create_table "order_execution_logs", force: :cascade do |t|
     t.bigint "order_execution_id"
@@ -26,6 +26,14 @@ ActiveRecord::Schema.define(version: 2021_05_23_000605) do
     t.string "direction"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.string "var", null: false
+    t.text "value"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["var"], name: "index_settings_on_var", unique: true
   end
 
   create_table "usdt_standard_orders", force: :cascade do |t|

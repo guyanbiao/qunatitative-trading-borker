@@ -29,4 +29,8 @@ class OrderExecution < ApplicationRecord
       transitions from: :open_order_placed, to: :open_order_confirmed
     end
   end
+
+  def logs
+    OrderExecutionLog.where(order_execution_id: id)
+  end
 end

@@ -1,0 +1,18 @@
+h1 API key 设置
+table.table
+  thead
+    tr
+      td access_key
+      td secret_key
+  tbody
+    tr
+      td #{Setting.huobi_access_key.to_s.last(6)}
+      td #{Setting.huobi_secret_key.to_s.last(6)}
+= form_for :settings, url: '/settings', html: {class: 'form'} do
+  div.form-group
+    = text_field_tag :access_key, nil, placeholder: 'access_key', class: 'form_control'
+  br
+  div.form-group
+    = text_field_tag :secret_key, nil, placeholder: 'secret_key'
+  br
+  = submit_tag '提交', class: 'btn btn-primary'

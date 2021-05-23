@@ -2,6 +2,9 @@
 require 'spec_helper'
 require 'webmock/rspec'
 
+require 'simplecov'
+SimpleCov.start
+
 ENV['RAILS_ENV'] ||= 'test'
 ENV['HUOBI_ACESS_KEY'] ='test'
 ENV['HUOBI_SECRET_KEY'] ='test'
