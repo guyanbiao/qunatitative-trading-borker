@@ -6,15 +6,22 @@ RSpec.describe PlaceOrderService do
     stub_place_order
     stub_order_info
     stub_contract_info
+    @user = User.create!(
+      email: 'foo@bar.com',
+      password: 'abcdabcd',
+      huobi_access_key: 'oo',
+      huobi_secret_key: 'ooo'
+    )
   end
 
   it 'open first order' do
-
-    order_execution = OrderExecution.create(
+    order_execution = OrderExecution.create!(
       currency: 'BTC',
-      direction: 'buy'
+      direction: 'buy',
+      user_id: @user.id
     )
-    PlaceOrderService.new(order_execution).execute
+
+    PlaceOrderService.new(@user, order_execution).execute
 
     # order
     expect(UsdtStandardOrder.count).to eq(1)
@@ -29,7 +36,7 @@ RSpec.describe PlaceOrderService do
 
   it 'has open order' do
     expect(PlaceOrderService::DEFAULT_PERCENTAGE).to eq(0.05.to_d)
-    first_order = UsdtStandardOrder.create(
+    first_order = UsdtStandardOrder.create!(
       volume: 3,
       client_order_id: 3323,
       remote_order_id: 232332,
@@ -40,15 +47,17 @@ RSpec.describe PlaceOrderService do
       lever_rate: 5,
       order_price_type: 'opponent',
       open_price: 10,
-      close_price: 20
+      close_price: 20,
+      user_id: @user.id
     )
 
-    order_execution = OrderExecution.create(
+    order_execution = OrderExecution.create!(
       currency: 'BTC',
-      direction: 'sell'
+      direction: 'sell',
+      user_id: @user.id
     )
 
-    PlaceOrderService.new(order_execution).execute
+    PlaceOrderService.new(@user, order_execution).execute
 
     # exist order
     first_order.reload
@@ -74,7 +83,7 @@ RSpec.describe PlaceOrderService do
 
   context :percentage do
     it 'works' do
-      UsdtStandardOrder.create(
+      UsdtStandardOrder.create!(
         volume: 3,
         client_order_id: 3323,
         remote_order_id: 232332,
@@ -86,11 +95,12 @@ RSpec.describe PlaceOrderService do
         order_price_type: 'opponent',
         open_price: 10,
         close_price: 20,
-        real_profit: -3
+        real_profit: -3,
+        user_id: @user.id
       )
       UsdtStandardOrder.create(
         volume: 3,
-        client_order_id: 3323,
+        client_order_id: 33231,
         remote_order_id: 232332,
         order_execution_id: nil,
         contract_code: 'BTC-USDT',
@@ -100,11 +110,12 @@ RSpec.describe PlaceOrderService do
         order_price_type: 'opponent',
         open_price: 10,
         close_price: 20,
-        real_profit: 3
+        real_profit: 3,
+        user_id: @user.id
       )
       UsdtStandardOrder.create(
         volume: 3,
-        client_order_id: 3323,
+        client_order_id: 332323,
         remote_order_id: 232332,
         order_execution_id: nil,
         contract_code: 'BTC-USDT',
@@ -114,14 +125,16 @@ RSpec.describe PlaceOrderService do
         order_price_type: 'opponent',
         open_price: 10,
         close_price: 20,
-        real_profit: -3
+        real_profit: -3,
+        user_id: @user.id
       )
 
-      order_execution = OrderExecution.create(
+      order_execution = OrderExecution.create!(
         currency: 'BTC',
-        direction: 'buy'
+        direction: 'buy',
+        user_id: @user.id
       )
-      service = PlaceOrderService.new(order_execution)
+      service = PlaceOrderService.new(@user, order_execution)
       expect(service.send(:continuous_fail_times)).to eq(1)
       expect(service.send(:percentage)).to eq(0.1.to_d)
     end

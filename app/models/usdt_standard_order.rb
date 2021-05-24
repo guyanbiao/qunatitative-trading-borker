@@ -5,6 +5,8 @@ class UsdtStandardOrder < ApplicationRecord
     FINISHED = 6
   end
 
+  validates_presence_of :user_id
+
   include AASM
   aasm column: :status do
     state :processing, initial: true
@@ -24,8 +26,5 @@ class UsdtStandardOrder < ApplicationRecord
 
   def parent_order
     UsdtStandardOrder.find(parent_order_id)
-  end
-
-  def remote_status
   end
 end

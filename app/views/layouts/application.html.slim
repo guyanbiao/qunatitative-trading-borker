@@ -19,5 +19,9 @@ html
           li.nav-item
             = link_to '系统设置', settings_path, class: 'nav-link'
 
+    - if notice
+      div class="alert alert-success" role="alert" #{notice}
+    - if alert
+      div class="alert alert-danger" role="alert" #{alert}
     div style="padding: 20px"
       = yield

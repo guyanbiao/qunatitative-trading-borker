@@ -14,11 +14,12 @@ class PlaceOrderService
   # 比如开仓资金100U 当收益率达到100%止盈本金的10%（10U）。200%时再次止盈本金的10%（10U）
   # 以此类推到 500%.  剩下的仓位 就随指标的提示去操作。
   # TODO !!!!!!!!!! change it back to 0.05
-  DEFAULT_PERCENTAGE = 0.5.to_d
+  DEFAULT_PERCENTAGE = 0.05.to_d
   MAX_CONTINUOUS_FAILURE_TIMES = 5
 
-  attr_reader :order_execution, :currency, :request_direction
-  def initialize(order_execution)
+  attr_reader :order_execution, :currency, :request_direction, :user
+  def initialize(user, order_execution)
+    @user = user
     @order_execution = order_execution
     @currency = order_execution.currency.upcase
     @request_direction = order_execution.direction
@@ -62,7 +63,8 @@ class PlaceOrderService
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'query_open_position',
-      response: remote_order_info
+      response: remote_order_info,
+      user_id: user.id
     )
     if remote_order_info['status'] == 'ok'
       order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
@@ -90,7 +92,8 @@ class PlaceOrderService
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'query_close_position',
-      response: remote_order_info
+      response: remote_order_info,
+      user_id: user.id
     )
     data = remote_order_info['data'].first
     if remote_order_info['status'] == 'ok' && data['status'] == UsdtStandardOrder::RemoteStatus::FINISHED
@@ -143,7 +146,7 @@ class PlaceOrderService
 
   def close_position(client_order_id)
     opposite_direction = last_order.direction == 'buy'  ? 'sell' : 'buy'
-    result = HuobiClient.new.contract_place_order(
+    result = client.contract_place_order(
       order_id: client_order_id,
       contract_code: contract_code,
       price: nil,
@@ -156,7 +159,8 @@ class PlaceOrderService
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'close_position',
-      response: result
+      response: result,
+      user_id: user.id
     )
     if result['status'] == 'ok'
       ActiveRecord::Base.transaction do
@@ -184,7 +188,7 @@ class PlaceOrderService
   def open_position(client_order_id)
     lever_rate = get_lever_rate
     volume = calculate_volume
-    result = HuobiClient.new.contract_place_order(
+    result = client.contract_place_order(
       order_id: client_order_id,
       contract_code: contract_code,
       price: nil,
@@ -196,7 +200,8 @@ class PlaceOrderService
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'open_position',
-      response: result
+      response: result,
+      user_id: user.id
     )
     if result['status']  == 'ok'
       ActiveRecord::Base.transaction do
@@ -208,8 +213,7 @@ class PlaceOrderService
           direction: request_direction,
           offset: 'open',
           volume: volume,
-          lever_rate: lever_rate
-        )
+          lever_rate: lever_rate )
       end
       handle_open_order_placed(client_order_id)
     else
@@ -229,7 +233,8 @@ class PlaceOrderService
       offset: offset,
       lever_rate: lever_rate,
       order_price_type: order_price_type,
-      parent_order_id: parent_order_id
+      parent_order_id: parent_order_id,
+      user_id: user.id
     )
   end
 
@@ -239,7 +244,7 @@ class PlaceOrderService
 
   def balance
     begin
-      result = HuobiClient.new.contract_balance('USDT')
+      result = client.contract_balance('USDT')
       balance = result['data'].find {|i| i['valuation_asset'] == 'USDT'}
       balance['balance'].to_d
     rescue
@@ -256,33 +261,37 @@ class PlaceOrderService
   end
 
   def current_price
-    result = HuobiClient.new.price_limit("#{currency}-USDT")
+    result = client.price_limit("#{currency}-USDT")
     item = result['data'].find {|i| i['symbol'] == currency}
     raise "price not found #{result}" unless item
     item['high_limit'].to_d
   end
 
   def percentage
-    return DEFAULT_PERCENTAGE unless last_order
+    return default_percentage unless last_order
 
     if last_order.profit?
-      DEFAULT_PERCENTAGE
+      default_percentage
     else
       if continuous_fail_times > MAX_CONTINUOUS_FAILURE_TIMES
-        DEFAULT_PERCENTAGE
+        default_percentage
       else
-        (continuous_fail_times + 1) *  DEFAULT_PERCENTAGE
+        (continuous_fail_times + 1) *  default_percentage
       end
     end
   end
 
+  def default_percentage
+    @default_percentage ||= user.first_order_percentage || DEFAULT_PERCENTAGE
+  end
+
   def continuous_fail_times
-    profit_order_id = UsdtStandardOrder.where("real_profit > 0").order(:created_at).last&.id || 0
+    profit_order_id = UsdtStandardOrder.where(user_id: user.id).where("real_profit > 0").order(:created_at).last&.id || 0
     UsdtStandardOrder.open.where("id > ?", profit_order_id).count
   end
 
   def last_order
-    @last_order ||= UsdtStandardOrder.open.last
+    @last_order ||= UsdtStandardOrder.open.where(user_id: user.id).last
   end
 
   def get_lever_rate
@@ -299,6 +308,6 @@ class PlaceOrderService
   end
 
   def client
-    @client ||= HuobiClient.new
+    @client ||= HuobiClient.new(user)
   end
 end

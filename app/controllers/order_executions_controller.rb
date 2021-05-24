@@ -1,6 +1,6 @@
 class OrderExecutionsController < ApplicationController
   def index
-    @order_executions = OrderExecution.order(created_at: :desc).page(params[:page]).per(per_page)
+    @order_executions = OrderExecution.where(user_id: current_user.id).order(created_at: :desc).page(params[:page]).per(per_page)
   end
 
   def new
@@ -8,8 +8,8 @@ class OrderExecutionsController < ApplicationController
   end
 
   def create
-    execution = OrderExecution.create!(create_params)
-    PlaceOrderService.new(execution).execute
+    execution = OrderExecution.create!(create_params.merge(user_id: current_user.id))
+    PlaceOrderService.new(current_user, execution).execute
   end
 
   def show

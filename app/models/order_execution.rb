@@ -1,5 +1,6 @@
 class OrderExecution < ApplicationRecord
   include AASM
+  validates_presence_of :user_id
 
   aasm column: :status do
     state :created, initial: true

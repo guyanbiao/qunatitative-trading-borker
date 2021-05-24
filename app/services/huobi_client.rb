@@ -3,9 +3,9 @@ class HuobiClient
     @host ||= Rails.application.config_for(:huobi)[:host]
   end
 
-  def initialize
-    @access_key = Setting.huobi_access_key
-    @secret_key = Setting.huobi_secret_key
+  def initialize(user)
+    @access_key = user.huobi_access_key
+    @secret_key = user.huobi_secret_key
     @signature_version = '2'
     #@host = "api.huobi.pro"
     @host = HuobiClient.host

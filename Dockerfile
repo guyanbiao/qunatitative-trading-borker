@@ -46,7 +46,9 @@ ADD bin /home/app/bin
 ADD public /home/app/public
 ADD lib /home/app/lib
 ADD vendor /home/app/vendor
-ADD db /home/app/db
+ADD db /home/app/db/migrate
+ADD db /home/app/db/schema.rb
+ADD db /home/app/db/seeds.rb
 ADD config /home/app/config
 ADD config/database.yml /home/app/config/database.yml
 ADD app /home/app/app
@@ -56,5 +58,5 @@ ADD app /home/app/app
 
 EXPOSE $RAILS_PORT
 
-ENTRYPOINT [ "bundle", "exec" ]
+ENTRYPOINT [ "bundle", "exec", "rails", "s", "-b", "0.0.0.0"]
 

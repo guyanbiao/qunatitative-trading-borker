@@ -4,6 +4,7 @@ class CreateUsdtStandardOrders < ActiveRecord::Migration[6.1]
       t.string :contract_code
       t.bigint :remote_order_id, index: true            # houbi order id
       t.bigint :client_order_id, index: {unique: true}  # system order id
+      t.bigint :user_id, index: true
       t.decimal :open_price
       t.decimal :close_price
       t.bigint :volume
