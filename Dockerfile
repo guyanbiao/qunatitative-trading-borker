@@ -43,7 +43,6 @@ RUN  bundle install
 ADD config.ru /home/app/config.ru
 ADD Rakefile /home/app/Rakefile
 ADD bin /home/app/bin
-ADD public /home/app/public
 ADD lib /home/app/lib
 ADD vendor /home/app/vendor
 ADD db/migrate /home/app/db/migrate
@@ -54,6 +53,7 @@ ADD config/database.yml /home/app/config/database.yml
 ADD app /home/app/app
 ADD package.json /home/app/package.json
 ADD yarn.lock /home/app/yarn.lock
+ADD public/packs /home/app/public/packs
 
 
 # navigate to app directory
