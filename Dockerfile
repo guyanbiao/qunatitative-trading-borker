@@ -46,12 +46,14 @@ ADD bin /home/app/bin
 ADD public /home/app/public
 ADD lib /home/app/lib
 ADD vendor /home/app/vendor
-ADD db /home/app/db/migrate
-ADD db /home/app/db/schema.rb
-ADD db /home/app/db/seeds.rb
+ADD db/migrate /home/app/db/migrate
+ADD db/schema.rb /home/app/db/schema.rb
+ADD db/seeds.rb /home/app/db/seeds.rb
 ADD config /home/app/config
 ADD config/database.yml /home/app/config/database.yml
 ADD app /home/app/app
+ADD package.json /home/app/package.json
+ADD yarn.lock /home/app/yarn.lock
 
 
 # navigate to app directory
