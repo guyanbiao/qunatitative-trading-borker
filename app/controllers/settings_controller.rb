@@ -12,9 +12,7 @@ class SettingsController < ApplicationController
   end
 
   def update_percentage
-    if current_user.update(
-      first_order_percentage: percentage_params[:first_order_percentage].to_d,
-      )
+    if current_user.update( percentage_params )
       flash[:notice] = '更新成功'
     else
       flash[:alert] = '更新失败'
@@ -23,6 +21,6 @@ class SettingsController < ApplicationController
   end
 
   def percentage_params
-    params.require(:user).permit(:first_order_percentage)
+    params.require(:user).permit(:first_order_percentage, :lever_rate)
   end
 end
