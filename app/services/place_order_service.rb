@@ -14,6 +14,7 @@ class PlaceOrderService
   # 比如开仓资金100U 当收益率达到100%止盈本金的10%（10U）。200%时再次止盈本金的10%（10U）
   # 以此类推到 500%.  剩下的仓位 就随指标的提示去操作。
   DEFAULT_PERCENTAGE = 0.005.to_d
+  DEFAULT_LEVER_RATE = 100
   MAX_CONTINUOUS_FAILURE_TIMES = 5
 
   attr_reader :order_execution, :currency, :request_direction, :user
@@ -185,7 +186,7 @@ class PlaceOrderService
   end
 
   def open_position(client_order_id)
-    lever_rate = get_lever_rate
+    lever_rate = lever_rate
     volume = calculate_volume
     result = client.contract_place_order(
       order_id: client_order_id,
@@ -238,7 +239,7 @@ class PlaceOrderService
   end
 
   def calculate_volume
-    (balance  * percentage / contract_price).to_i
+    (balance * lever_rate * percentage / contract_price).round
   end
 
   def balance
@@ -293,9 +294,8 @@ class PlaceOrderService
     @last_order ||= UsdtStandardOrder.open.where(user_id: user.id).last
   end
 
-  def get_lever_rate
-    # TODO add settings
-    5
+  def lever_rate
+    @lever_rate ||= user.lever_rate || DEFAULT_LEVER_RATE
   end
 
   def order_price_type

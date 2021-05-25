@@ -10,6 +10,7 @@ class OrderExecutionsController < ApplicationController
   def create
     execution = OrderExecution.create!(create_params.merge(user_id: current_user.id))
     PlaceOrderService.new(current_user, execution).execute
+    redirect_to order_executions_path
   end
 
   def show

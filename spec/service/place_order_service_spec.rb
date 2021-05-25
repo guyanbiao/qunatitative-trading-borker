@@ -6,12 +6,29 @@ RSpec.describe PlaceOrderService do
     stub_place_order
     stub_order_info
     stub_contract_info
+    stub_contract_balance
     @user = User.create!(
       email: 'foo@bar.com',
       password: 'abcdabcd',
       huobi_access_key: 'oo',
       huobi_secret_key: 'ooo'
     )
+  end
+
+  context '.lever_rate' do
+    it 'works' do
+      order_execution = OrderExecution.create!(
+        currency: 'BTC',
+        direction: 'buy',
+        user_id: @user.id
+      )
+      service = PlaceOrderService.new(@user, order_execution)
+      expect(service.lever_rate).to eq(100)
+      expect(service.balance).to eq('68.839155724155396568'.to_d)
+      expect(service.percentage).to eq('0.005'.to_d)
+      expect(service.contract_price).to eq('38.5672'.to_d)
+      expect(service.calculate_volume).to eq(1)
+    end
   end
 
   it 'open first order' do
@@ -174,6 +191,15 @@ RSpec.describe PlaceOrderService do
     stub_request(:get, r).to_return(
       status: 200,
       body: file_fixture('swap_contract_info.json'),
+      headers: {}
+    )
+  end
+
+  def stub_contract_balance
+    r = Regexp.new( "https://huobi.test.com/linear-swap-api/v1/swap_balance_valuation\\?.*" )
+    stub_request(:post, r).to_return(
+      status: 200,
+      body: file_fixture('swap_contract_balance.json'),
       headers: {}
     )
   end
