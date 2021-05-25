@@ -13,8 +13,7 @@ class PlaceOrderService
   # 收益率达到200% 再止盈本金的 10%， 以此类推止盈到500%。
   # 比如开仓资金100U 当收益率达到100%止盈本金的10%（10U）。200%时再次止盈本金的10%（10U）
   # 以此类推到 500%.  剩下的仓位 就随指标的提示去操作。
-  # TODO !!!!!!!!!! change it back to 0.05
-  DEFAULT_PERCENTAGE = 0.05.to_d
+  DEFAULT_PERCENTAGE = 0.005.to_d
   MAX_CONTINUOUS_FAILURE_TIMES = 5
 
   attr_reader :order_execution, :currency, :request_direction, :user
