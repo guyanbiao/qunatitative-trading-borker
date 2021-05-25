@@ -186,7 +186,6 @@ class PlaceOrderService
   end
 
   def open_position(client_order_id)
-    lever_rate = lever_rate
     volume = calculate_volume
     result = client.contract_place_order(
       order_id: client_order_id,

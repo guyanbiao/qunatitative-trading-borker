@@ -32,8 +32,7 @@
 .env.development
 .idea/
 .rakeTasks
-*.swp
-*.swo
+*.sw*
 coverage/*
 
 /public/packs
@@ -43,3 +42,4 @@ coverage/*
 yarn-debug.log*
 .yarn-integrity
 db/db_files
+coverage
