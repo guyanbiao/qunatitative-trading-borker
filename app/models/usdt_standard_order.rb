@@ -21,7 +21,7 @@ class UsdtStandardOrder < ApplicationRecord
   scope :close, -> {where(offset: 'close')}
 
   def profit?
-    real_profit > 0
+    real_profit && real_profit > 0
   end
 
   def parent_order
