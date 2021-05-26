@@ -136,7 +136,6 @@ class PlaceOrderService
     end
   end
 
-  #private
   def has_position?
     @has_position ||= last_order && last_order.status == 'processing'
   end
@@ -186,7 +185,7 @@ class PlaceOrderService
   end
 
   def open_position(client_order_id)
-    volume = calculate_volume
+    volume = calculate_open_position_volume
     result = client.contract_place_order(
       order_id: client_order_id,
       contract_code: contract_code,
@@ -195,7 +194,8 @@ class PlaceOrderService
       direction: request_direction,
       offset: 'open',
       lever_rate: lever_rate,
-      order_price_type: order_price_type )
+      order_price_type: order_price_type
+    )
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'open_position',
@@ -237,8 +237,12 @@ class PlaceOrderService
     )
   end
 
-  def calculate_volume
-    (balance * lever_rate * percentage / contract_price).round
+  def open_position_service
+    @open_position_service ||= OpenPositionService.new(user, currency)
+  end
+
+  def calculate_open_position_volume
+    open_position_service.calculate_open_position_volume
   end
 
   def balance
@@ -251,46 +255,8 @@ class PlaceOrderService
     end
   end
 
-  def contract_price
-    current_price * contract_unit_price
-  end
-
-  def contract_unit_price
-    client.contract_info(contract_code)['data'].last['contract_size'].to_d
-  end
-
-  def current_price
-    result = client.price_limit("#{currency}-USDT")
-    item = result['data'].find {|i| i['symbol'] == currency}
-    raise "price not found #{result}" unless item
-    item['high_limit'].to_d
-  end
-
-  def percentage
-    return default_percentage unless last_order
-
-    if last_order.profit?
-      default_percentage
-    else
-      if continuous_fail_times > MAX_CONTINUOUS_FAILURE_TIMES
-        default_percentage
-      else
-        (continuous_fail_times + 1) *  default_percentage
-      end
-    end
-  end
-
-  def default_percentage
-    @default_percentage ||= user.first_order_percentage || DEFAULT_PERCENTAGE
-  end
-
-  def continuous_fail_times
-    profit_order_id = UsdtStandardOrder.where(user_id: user.id).where("real_profit > 0").order(:created_at).last&.id || 0
-    UsdtStandardOrder.open.where("id > ?", profit_order_id).count
-  end
-
   def last_order
-    @last_order ||= UsdtStandardOrder.open.where(user_id: user.id).last
+    @last_order ||= UsdtStandardOrder.order(:created_at).open.where(user_id: user.id).last
   end
 
   def lever_rate

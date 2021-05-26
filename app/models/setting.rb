@@ -13,4 +13,5 @@ class Setting < RailsSettings::Base
   field :huobi_access_key, type: :string
   field :huobi_secret_key, type: :string
   field :place_order_default_percentage, type: :string
+  field :support_currencies, type: :array, default: ['BTC', 'ETH']
 end

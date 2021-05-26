@@ -25,9 +25,9 @@ RSpec.describe PlaceOrderService do
       service = PlaceOrderService.new(@user, order_execution)
       expect(service.lever_rate).to eq(100)
       expect(service.balance).to eq('68.839155724155396568'.to_d)
-      expect(service.percentage).to eq('0.005'.to_d)
-      expect(service.contract_price).to eq('38.5672'.to_d)
-      expect(service.calculate_volume).to eq(1)
+      expect(service.open_position_service.open_order_percentage).to eq('0.005'.to_d)
+      expect(service.open_position_service.contract_price).to eq('38.5672'.to_d)
+      expect(service.open_position_service.calculate_open_position_volume).to eq(1)
     end
   end
 
@@ -98,7 +98,7 @@ RSpec.describe PlaceOrderService do
     expect(last_order.direction).to eq('sell')
   end
 
-  context :percentage do
+  context 'open_order_percentage' do
     it 'works' do
       UsdtStandardOrder.create!(
         volume: 3,
@@ -152,8 +152,8 @@ RSpec.describe PlaceOrderService do
         user_id: @user.id
       )
       service = PlaceOrderService.new(@user, order_execution)
-      expect(service.send(:continuous_fail_times)).to eq(1)
-      expect(service.send(:percentage)).to eq(0.01.to_d)
+      expect(service.open_position_service.send(:continuous_fail_times)).to eq(1)
+      expect(service.open_position_service.send(:open_order_percentage)).to eq(0.01.to_d)
     end
   end
 
