@@ -9,6 +9,9 @@ div.container
             td 参考价格
             td #{@ops.current_price}
           tr
+            td symbol
+            td #{@ops.currency}
+          tr
             td 单张合约价格
             td #{@ops.contract_price} USDT
           tr
@@ -31,6 +34,12 @@ div.container
           = f.select :direction, [['开多', 'buy'], ['开空', 'sell']], {}, class: 'custom-select', placeholder: '方向'
         div.form-group
           labe 币种
-          = select_tag :field, options_for_select(Setting.support_currencies, 'ETH'), class: 'custom-select'
+          = f.select :currency, options_for_select(Setting.support_currencies, @order_execution.currency), {}, class: 'custom-select', id: 'currency'
         br
         = f.submit '提交', class: 'btn btn-primary'
+
+javascript:
+  $("#currency").change(function () {
+    console.log($(this).val())
+    window.location ="/order_executions/new?symbol=" + $(this).val()
+  });

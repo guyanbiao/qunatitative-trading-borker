@@ -256,7 +256,7 @@ class PlaceOrderService
   end
 
   def last_order
-    @last_order ||= UsdtStandardOrder.order(:created_at).open.where(user_id: user.id).last
+    open_position_service.last_order
   end
 
   def lever_rate

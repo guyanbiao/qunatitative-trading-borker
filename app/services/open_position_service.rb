@@ -66,9 +66,14 @@ class OpenPositionService
   end
 
   def continuous_fail_times
-    profit_order_id = UsdtStandardOrder.where(user_id: user.id).where("real_profit > 0").order(:created_at).last&.id || 0
+    profit_order_id = UsdtStandardOrder.where(contract_code: contract_code).where(user_id: user.id).where("real_profit > 0").order(:created_at).last&.id || 0
     UsdtStandardOrder.open.where("id > ?", profit_order_id).count
   end
+
+  def last_order
+    @last_order ||= UsdtStandardOrder.where(contract_code: contract_code).order(:created_at).open.where(user_id: user.id).last
+  end
+
   private
   def client
     @client ||= HuobiClient.new(user)
@@ -78,7 +83,4 @@ class OpenPositionService
     @information ||= HuobiInformationService.new(user, currency)
   end
 
-  def last_order
-    @last_order ||= UsdtStandardOrder.order(:created_at).open.where(user_id: user.id).last
-  end
 end

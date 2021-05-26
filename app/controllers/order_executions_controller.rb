@@ -6,7 +6,7 @@ class OrderExecutionsController < ApplicationController
   def new
     @default_option = params[:symbol].present? ? params[:symbol].upcase : Setting.support_currencies.first
     @ops = OpenPositionService.new(current_user, @default_option)
-    @order_execution = OrderExecution.new
+    @order_execution = OrderExecution.new(currency: @default_option)
   end
 
   def create
