@@ -16,11 +16,13 @@ html
         span.navbar-toggler-icon
       #navbarSupportedContent.collapse.navbar-collapse
         ul.navbar-nav.mr-auto
-          li.nav-item.active
-            = link_to '下单', order_executions_path, class: 'nav-link'
-          li.nav-item
-            = link_to '系统设置', settings_path, class: 'nav-link'
-
+          - if user_signed_in?
+            li.nav-item.active
+              = link_to '下单', order_executions_path, class: 'nav-link'
+            li.nav-item
+              = link_to '系统设置', settings_path, class: 'nav-link'
+            li.nav-item
+              = link_to "登出", destroy_user_session_path, method: :delete, class: 'nav-link'
     - if notice
       div class="alert alert-success" role="alert" #{notice}
     - if alert
