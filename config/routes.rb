@@ -9,11 +9,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :webhooks, only: [] do
-    collection do
-      post :alert
-    end
-  end
+  post "webhooks/alert/:token", to: 'webhooks#alert'
 
   resources :usdt_standard_orders, only: [:index] do
     member do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_25_161305) do
+ActiveRecord::Schema.define(version: 2021_05_27_005732) do
 
   create_table "order_execution_logs", force: :cascade do |t|
     t.bigint "user_id"
@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(version: 2021_05_25_161305) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lever_rate"
+    t.string "webhook_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
