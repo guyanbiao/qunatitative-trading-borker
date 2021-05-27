@@ -9,7 +9,6 @@ table.table
       td xxxxxxxxx#{current_user.huobi_access_key.to_s.last(3)}
       td xxxxxxxxx#{current_user.huobi_secret_key.to_s.last(3)}
 
-h1 其他设置
 = form_for :settings, url: '/settings', html: {class: 'form'} do
   div.form-group
     label access_key
@@ -22,8 +21,7 @@ h1 其他设置
   = submit_tag '提交', class: 'btn btn-primary'
 
 br
-h1
-
+h1 其他设置
 = form_for current_user, url: '/settings/update_percentage', method: :post, html: { class: 'form' } do |f|
   div.form-group
     label 第一单下单倍数(默认0.005)
@@ -31,6 +29,8 @@ h1
   div.form-group
     label 杠杆率(默认100)
     = f.text_field :lever_rate, placeholder: '100', class: 'form-control'
-  br
+  div.form-group
+    label webhook_token(用于trading view)
+    = f.text_field :webhook_token, class: 'form-control'
   = f.submit '提交', class: 'btn btn-primary'
 

@@ -15,12 +15,12 @@ class SettingsController < ApplicationController
     if current_user.update( percentage_params )
       flash[:notice] = '更新成功'
     else
-      flash[:alert] = '更新失败'
+      flash[:alert] = "#{current_user.errors.full_messages}"
     end
     redirect_back(fallback_location: '/settings')
   end
 
   def percentage_params
-    params.require(:user).permit(:first_order_percentage, :lever_rate)
+    params.require(:user).permit(:first_order_percentage, :lever_rate, :webhook_token)
   end
 end
