@@ -107,13 +107,14 @@ RSpec.describe PlaceOrderService do
         order_execution_id: nil,
         contract_code: 'BTC-USDT',
         direction: 'buy',
-        offset: 'open',
+        offset: 'close',
         lever_rate: 5,
         order_price_type: 'opponent',
         open_price: 10,
         close_price: 20,
         real_profit: -3,
-        user_id: @user.id
+        user_id: @user.id,
+        status: 'done'
       )
       UsdtStandardOrder.create(
         volume: 3,
@@ -122,13 +123,14 @@ RSpec.describe PlaceOrderService do
         order_execution_id: nil,
         contract_code: 'BTC-USDT',
         direction: 'sell',
-        offset: 'open',
+        offset: 'close',
         lever_rate: 5,
         order_price_type: 'opponent',
         open_price: 10,
         close_price: 20,
         real_profit: 3,
-        user_id: @user.id
+        user_id: @user.id,
+        status: 'done'
       )
       UsdtStandardOrder.create(
         volume: 3,
@@ -137,13 +139,14 @@ RSpec.describe PlaceOrderService do
         order_execution_id: nil,
         contract_code: 'BTC-USDT',
         direction: 'sell',
-        offset: 'open',
+        offset: 'close',
         lever_rate: 5,
         order_price_type: 'opponent',
         open_price: 10,
         close_price: 20,
         real_profit: -3,
-        user_id: @user.id
+        user_id: @user.id,
+        status: 'done'
       )
 
       order_execution = OrderExecution.create!(

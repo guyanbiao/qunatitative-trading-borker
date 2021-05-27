@@ -15,5 +15,11 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :usdt_standard_orders, only: [:index] do
+    member do
+      post :close_position
+    end
+  end
+
   root to: 'order_executions#index'
 end

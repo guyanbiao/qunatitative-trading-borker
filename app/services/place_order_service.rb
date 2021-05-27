@@ -144,17 +144,10 @@ class PlaceOrderService
   end
 
   def close_position(client_order_id)
-    opposite_direction = last_order.direction == 'buy'  ? 'sell' : 'buy'
-    result = client.contract_place_order(
-      order_id: client_order_id,
-      contract_code: contract_code,
-      price: nil,
-      volume: last_order.volume,
-      direction: opposite_direction,
-      offset: 'close',
-      lever_rate: last_order.lever_rate,
-      order_price_type: order_price_type,
-    )
+    result = ClosePositionService.new(last_order, client_order_id).execute do
+      order_execution.close
+      order_execution.save!
+    end
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'close_position',
@@ -162,19 +155,6 @@ class PlaceOrderService
       user_id: user.id
     )
     if result['status'] == 'ok'
-      ActiveRecord::Base.transaction do
-        create_order!(
-          remote_order_id: result['data']['order_id'],
-          client_order_id: client_order_id,
-          direction: opposite_direction,
-          parent_order_id: last_order.id,
-          offset: 'close',
-          volume: last_order.volume,
-          lever_rate: last_order.lever_rate
-        )
-        order_execution.close
-        order_execution.save!
-      end
       handle_close_order_placed(client_order_id)
     end
   end

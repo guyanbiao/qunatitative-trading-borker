@@ -31,9 +31,9 @@ class OpenPositionService
   def open_order_percentage
     @open_order_percentage ||=
       begin
-        return default_percentage unless last_order
+        return default_percentage unless last_finished_close_order
 
-        if last_order.profit?
+        if last_finished_close_order.profit?
           default_percentage
         else
           if continuous_fail_times > MAX_CONTINUOUS_FAILURE_TIMES
@@ -66,12 +66,16 @@ class OpenPositionService
   end
 
   def continuous_fail_times
-    profit_order_id = UsdtStandardOrder.where(contract_code: contract_code).where(user_id: user.id).where("real_profit > 0").order(:created_at).last&.id || 0
-    UsdtStandardOrder.open.where("id > ?", profit_order_id).count
+    profit_order_id = UsdtStandardOrder.close.where(contract_code: contract_code).where(user_id: user.id).where("real_profit > 0").order(:created_at).last&.id || 0
+    UsdtStandardOrder.close.where(contract_code: contract_code).where(user_id: user.id).where("real_profit <= 0").where("id > ?", profit_order_id).count
   end
 
   def last_order
     @last_order ||= UsdtStandardOrder.where(contract_code: contract_code).order(:created_at).open.where(user_id: user.id).last
+  end
+
+  def last_finished_close_order
+    @last_close_order ||= query_service.last_finished_close_order(contract_code: contract_code, user_id: user.id)
   end
 
   private
@@ -83,4 +87,7 @@ class OpenPositionService
     @information ||= HuobiInformationService.new(user, currency)
   end
 
+  def query_service
+    Query::UsdtStandardOrderService.new
+  end
 end
