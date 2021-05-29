@@ -1,11 +1,22 @@
 #!/usr/bin/env bash
 
-if rspec; then
-  echo “Success”
-  hash=`git log -1 --format="%H"`
-  docker build -t registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash .
-  docker push registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash
+
+if [[ -z $(git status -s) ]]
+then
+  echo "tree is clean"
 else
-  echo “Failure, exit status: $?”
+  echo "tree is dirty, please commit changes before running this"
+  exit
 fi
 
+
+if rspec; then
+  echo "rspec passed :)"
+else
+  echo "rspec fail"
+  exit
+fi
+
+hash=`git log -1 --format="%H"`
+docker build -t registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash .
+docker push registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash
