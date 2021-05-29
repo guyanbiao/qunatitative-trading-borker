@@ -2,13 +2,14 @@
 require 'rails_helper'
 
 RSpec.describe WebhooksController do
+  let(:token) {'adjkladsjfkajsdfsfd'}
   it 'works' do
     @user = User.create!(
       email: 'foo@bar.com',
       password: 'abcdabcd',
       huobi_access_key: 'oo',
       huobi_secret_key: 'ooo',
-      webhook_token: 'abc'
+      webhook_token: token
     )
     allow_any_instance_of(WebhooksController).to receive(:valid_ips).and_return(['127.0.0.1'])
     ActionController::Base.allow_forgery_protection = true
@@ -17,7 +18,8 @@ RSpec.describe WebhooksController do
     stub_order_info
     stub_contract_info
     stub_contract_balance
-    post '/webhooks/alert/abc',
+    stub_user_no_current_position
+    post "/webhooks/alert/#{token}",
          params: {
            direction: 'buy',
            ticker: 'BTCUSDT'

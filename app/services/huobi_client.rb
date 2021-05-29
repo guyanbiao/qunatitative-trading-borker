@@ -63,6 +63,14 @@ class HuobiClient
     util(path,params,request_method)
   end
 
+  def current_position(contract_code)
+    path = "/linear-swap-api/v1/swap_cross_position_info"
+    params ={contract_code: contract_code}
+    request_method = "POST"
+    util(path,params,request_method)
+  end
+
+
   private
 
   def util(path,params,request_method)

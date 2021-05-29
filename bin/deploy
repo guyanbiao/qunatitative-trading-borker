@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-hash=`git log -1 --format="%H"`
+if rspec; then
+  echo “Success”
+  hash=`git log -1 --format="%H"`
+  docker build -t registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash .
+  docker push registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash
+else
+  echo “Failure, exit status: $?”
+fi
 
-docker build -t registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash .
-
-docker push registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash

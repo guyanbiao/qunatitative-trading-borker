@@ -1,3 +1,25 @@
+- if @close_order
+  h1 平仓订单
+  table.table
+    thead
+      tr
+        th 类型
+        th 合约代码
+        th 下单价格
+        th 执行价格
+        th 合约张数
+        th 杠杆倍数
+        th 收益
+    tbody
+      tr
+        td #{@close_order.direction}
+        td #{@close_order.contract_code}
+        td #{@close_order.open_price}
+        td #{@close_order.close_price}
+        td #{@close_order.volume}
+        td #{@close_order.lever_rate}
+        td #{@close_order.real_profit}
+
 - if @open_order
   h1 开仓订单
   table.table
@@ -23,27 +45,6 @@
         td
           = link_to '平仓', close_position_usdt_standard_order_path(@open_order), method: :post, class: 'btn btn-primary'
 
-- if @close_order
-  h1 平仓订单
-  table.table
-    thead
-      tr
-        th 类型
-        th 合约代码
-        th 下单价格
-        th 执行价格
-        th 合约张数
-        th 杠杆倍数
-        th 收益
-    tbody
-      tr
-        td #{@close_order.direction}
-        td #{@close_order.contract_code}
-        td #{@close_order.open_price}
-        td #{@close_order.close_price}
-        td #{@close_order.volume}
-        td #{@close_order.lever_rate}
-        td #{@close_order.real_profit}
 h1 操作日志
 table.table
   thead

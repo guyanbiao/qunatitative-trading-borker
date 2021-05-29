@@ -11,6 +11,7 @@ class ClosePositionService
 
   def execute
     opposite_direction = order.direction == 'buy'  ? 'sell' : 'buy'
+
     result = client.contract_place_order(
       order_id: client_order_id,
       contract_code: order.contract_code,
@@ -19,7 +20,7 @@ class ClosePositionService
       direction: opposite_direction,
       offset: 'close',
       lever_rate: order.lever_rate,
-      order_price_type: order.order_price_type,
+      order_price_type: order_price_type,
       )
     if result['status'] == 'ok'
       ActiveRecord::Base.transaction do
@@ -55,5 +56,9 @@ class ClosePositionService
 
   def client
     @client ||= HuobiClient.new(User.find(order.user_id))
+  end
+
+  def order_price_type
+    'opponent'
   end
 end

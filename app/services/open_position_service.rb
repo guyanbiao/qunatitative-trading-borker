@@ -70,10 +70,6 @@ class OpenPositionService
     UsdtStandardOrder.close.where(contract_code: contract_code).where(user_id: user.id).where("real_profit <= 0").where("id > ?", profit_order_id).count
   end
 
-  def last_order
-    @last_order ||= UsdtStandardOrder.where(contract_code: contract_code).order(:created_at).open.where(user_id: user.id).last
-  end
-
   def last_finished_close_order
     @last_close_order ||= query_service.last_finished_close_order(contract_code: contract_code, user_id: user.id)
   end

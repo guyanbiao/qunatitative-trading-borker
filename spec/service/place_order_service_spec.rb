@@ -7,6 +7,7 @@ RSpec.describe PlaceOrderService do
     stub_order_info
     stub_contract_info
     stub_contract_balance
+    stub_user_current_position
     @user = User.create!(
       email: 'foo@bar.com',
       password: 'abcdabcd',
@@ -31,7 +32,8 @@ RSpec.describe PlaceOrderService do
     end
   end
 
-  it 'open first order' do
+  it 'no position' do
+    stub_user_no_current_position
     order_execution = OrderExecution.create!(
       currency: 'BTC',
       direction: 'buy',
@@ -76,20 +78,17 @@ RSpec.describe PlaceOrderService do
 
     PlaceOrderService.new(@user, order_execution).execute
 
-    # exist order
+    # update exist open order
     first_order.reload
     expect(first_order.offset).to eq('open')
     expect(first_order.direction).to eq('buy')
-    expect(first_order.status).to eq('done')
-    expect(first_order.remote_status).to eq(6)
-    expect(first_order.profit).to eq(-0.3854.to_d)
     # close exist order
     second_order = UsdtStandardOrder.all.order(:id)[1]
     expect(second_order.offset).to eq('close')
     expect(second_order.direction).to eq('sell')
-    expect(second_order.parent_order_id).to eq(1)
     expect(second_order.remote_status).to eq(6)
     expect(second_order.profit).to eq(-0.3854.to_d)
+    expect(second_order.order_execution_id).to eq(order_execution.id)
     # place new order
     last_order = UsdtStandardOrder.all.order(:id)[2]
     expect(last_order.parent_order_id).to eq(nil)

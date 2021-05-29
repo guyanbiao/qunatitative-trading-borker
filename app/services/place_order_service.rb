@@ -101,16 +101,6 @@ class PlaceOrderService
         order_execution.close_finish
         order_execution.save!
         close_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
-        open_order = last_order
-        open_order.finish
-        open_order.assign_attributes(
-          profit: data['profit'],
-          real_profit: data['real_profit'],
-          trade_avg_price: data['trade_avg_price'],
-          fee: data['fee'],
-          remote_status: data['status']
-        )
-        open_order.save!
         close_order.finish
         close_order.assign_attributes(
           profit: data['profit'],
@@ -137,24 +127,60 @@ class PlaceOrderService
   end
 
   def has_position?
-    @has_position ||= last_order && last_order.status == 'processing'
+    remote_orders.count > 0
+  end
+
+  def has_local_position?
+  end
+
+  def has_remote_position?
+  end
+
+  def remote_orders
+    @remote_orders ||= client.current_position(contract_code)['data']
+    # {"symbol"=>"ETH",
+    #  "contract_code"=>"ETH-USDT",
+    #  "volume"=>1.0,
+    #  "available"=>1.0,
+    #  "frozen"=>0.0,
+    #  "cost_open"=>2756.0,
+    #  "cost_hold"=>2756.0,
+    #  "profit_unreal"=>-0.0359,
+    #  "profit_rate"=>-0.006513062409288825,
+    #  "lever_rate"=>5,
+    #  "position_margin"=>5.50482,
+    #  "direction"=>"buy",
+    #  "profit"=>-0.0359,
+    #  "last_price"=>2752.41,
+    #  "margin_asset"=>"USDT",
+    #  "margin_mode"=>"cross",
+    #  "margin_account"=>"USDT"}
   end
 
   def remote_orders_count
   end
 
   def close_position(client_order_id)
-    result = ClosePositionService.new(last_order, client_order_id).execute do
-      order_execution.close
-      order_execution.save!
-    end
+    ro = remote_orders.first
+    remote_order = RemoteUsdtStandardOrder.new(
+      id: nil,
+      user_id: user.id,
+      contract_code: contract_code,
+      lever_rate: ro['lever_rate'],
+      volume: ro['volume'].to_i,
+      direction: ro['direction']
+    )
+    result = ClosePositionService.new(remote_order, client_order_id, order_execution_id: order_execution.id).execute
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'close_position',
       response: result,
       user_id: user.id
     )
-    if result['status'] == 'ok'
+
+    if result['status']  == 'ok'
+      order_execution.close
+      order_execution.save!
       handle_close_order_placed(client_order_id)
     end
   end
@@ -233,10 +259,6 @@ class PlaceOrderService
     rescue
       0.to_d
     end
-  end
-
-  def last_order
-    open_position_service.last_order
   end
 
   def lever_rate

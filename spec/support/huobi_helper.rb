@@ -47,6 +47,24 @@ module HuobiHelper
       headers: {}
     )
   end
+
+  def stub_user_current_position
+    r = Regexp.new( "https://huobi.test.com/linear-swap-api/v1/swap_cross_position_info\\?.*" )
+    stub_request(:post, r).to_return(
+      status: 200,
+      body: file_fixture('swap_cross_position_info.json'),
+      headers: {}
+    )
+  end
+
+  def stub_user_no_current_position
+    r = Regexp.new( "https://huobi.test.com/linear-swap-api/v1/swap_cross_position_info\\?.*" )
+    stub_request(:post, r).to_return(
+      status: 200,
+      body: file_fixture('no_swap_cross_position_info.json'),
+      headers: {}
+    )
+  end
 end
 
 RSpec.configure { |config| config.include HuobiHelper }
