@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_27_005732) do
+ActiveRecord::Schema.define(version: 2021_05_29_013641) do
+
+  create_table "alert_logs", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "content"
+    t.text "source_type"
+    t.bigint "source_id"
+    t.string "ip_address"
+    t.string "error_code"
+    t.string "error_message"
+    t.string "status"
+  end
 
   create_table "order_execution_logs", force: :cascade do |t|
     t.bigint "user_id"

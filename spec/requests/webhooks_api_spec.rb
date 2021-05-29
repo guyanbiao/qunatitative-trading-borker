@@ -11,7 +11,7 @@ RSpec.describe WebhooksController do
       huobi_secret_key: 'ooo',
       webhook_token: token
     )
-    allow_any_instance_of(WebhooksController).to receive(:valid_ips).and_return(['127.0.0.1'])
+    allow_any_instance_of(WebhookHandlingService).to receive(:valid_ips).and_return(['127.0.0.1'])
     ActionController::Base.allow_forgery_protection = true
     stub_price_limit
     stub_place_order
@@ -39,5 +39,30 @@ RSpec.describe WebhooksController do
     # order execution
     order_execution = OrderExecution.last
     expect(order_execution.status).to eq('open_order_confirmed')
+    alert_log = AlertLog.last
+    expect(alert_log.ip_address).to eq('127.0.0.1')
+    expect(alert_log.source_type).to eq('user')
+    expect(alert_log.source_id).to eq(@user.id)
+    expect(alert_log.error_code).to eq(nil)
+    expect(alert_log.error_message).to eq(nil)
+    expect(alert_log.status).to eq('ok')
+    expect(alert_log.content).to eq("{\"token\":\"adjkladsjfkajsdfsfd\",\"direction\":\"buy\",\"ticker\":\"BTCUSDT\"}")
+  end
+
+  it 'return invalid ip address' do
+    in_correct_ticker = 'BTCUSDTO'
+    post "/webhooks/alert/#{token}",
+         params: {
+           direction: 'buy',
+           ticker: in_correct_ticker
+         }.to_json,
+         headers:
+           {
+             'Content-Type': 'application/json'
+           }
+    expect(response.body).to eq('001')
+    alert_log = AlertLog.last
+    expect(alert_log.ip_address).to eq('127.0.0.1')
+    expect(alert_log.status).to eq('error')
   end
 end
