@@ -66,5 +66,5 @@ ADD .browserslistrc /home/app/.browserslistrc
 
 EXPOSE $RAILS_PORT
 
-ENTRYPOINT [ "bundle", "exec", "rails", "s", "-b", "0.0.0.0"]
+CMD start.sh
 

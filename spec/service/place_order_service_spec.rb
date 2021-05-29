@@ -8,6 +8,7 @@ RSpec.describe PlaceOrderService do
     stub_contract_info
     stub_contract_balance
     stub_user_current_position
+    stub_user_history
     @user = User.create!(
       email: 'foo@bar.com',
       password: 'abcdabcd',
@@ -154,8 +155,8 @@ RSpec.describe PlaceOrderService do
         user_id: @user.id
       )
       service = PlaceOrderService.new(@user, order_execution)
-      expect(service.open_position_service.send(:continuous_fail_times)).to eq(1)
-      expect(service.open_position_service.send(:open_order_percentage)).to eq(0.01.to_d)
+      expect(service.open_position_service.send(:continuous_fail_times)).to eq(0)
+      expect(service.open_position_service.send(:open_order_percentage)).to eq(0.005.to_d)
     end
   end
 end

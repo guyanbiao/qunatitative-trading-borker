@@ -19,6 +19,7 @@ RSpec.describe WebhooksController do
     stub_contract_info
     stub_contract_balance
     stub_user_no_current_position
+    stub_user_history
     post "/webhooks/alert/#{token}",
          params: {
            direction: 'buy',

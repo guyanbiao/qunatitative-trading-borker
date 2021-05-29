@@ -28,12 +28,30 @@ class OpenPositionService
     @lever_rate ||= user.lever_rate || DEFAULT_LEVER_RATE
   end
 
+  def close_orders
+    # revere order
+    @close_orders ||=
+      begin
+        result = client.history(contract_code)['data']['trades']
+        result.select {|t| t['offset'] == 'close'}
+      end
+  end
+
+  def last_order
+    # time revere order
+    close_orders.first
+  end
+
+  def profit?(order)
+    order['real_profit'] > 0
+  end
+
   def open_order_percentage
     @open_order_percentage ||=
       begin
-        return default_percentage unless last_finished_close_order
+        return default_percentage unless close_orders.length > 0
 
-        if last_finished_close_order.profit?
+        if profit?(last_order)
           default_percentage
         else
           if continuous_fail_times > MAX_CONTINUOUS_FAILURE_TIMES
@@ -66,8 +84,8 @@ class OpenPositionService
   end
 
   def continuous_fail_times
-    profit_order_id = UsdtStandardOrder.close.where(contract_code: contract_code).where(user_id: user.id).where("real_profit > 0").order(:created_at).last&.id || 0
-    UsdtStandardOrder.close.where(contract_code: contract_code).where(user_id: user.id).where("real_profit <= 0").where("id > ?", profit_order_id).count
+    latest_profile_order = close_orders.find {|o| profit?(o)}
+    close_orders.index(latest_profile_order)
   end
 
   def last_finished_close_order

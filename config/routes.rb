@@ -1,12 +1,9 @@
 Rails.application.routes.draw do
   namespace :admin do
-      resources :users
       resources :alert_logs
-      resources :order_executions
-      resources :order_execution_logs
       resources :usdt_standard_orders
 
-      root to: "settings#index"
+      root to: "usdt_standard_orders#index"
     end
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

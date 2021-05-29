@@ -70,6 +70,19 @@ class HuobiClient
     util(path,params,request_method)
   end
 
+  def history(contract_code, page_index: 1)
+    path = "/linear-swap-api/v1/swap_cross_matchresults"
+    # trade_type 0:全部,1:买入开多,2: 卖出开空,3: 买入平空,4: 卖出平多,5: 卖出强平,6: 买入强平
+    params = {
+      contract_code: contract_code,
+      trade_type: 0,
+      create_date: 90,
+      page_index: page_index,
+      page_size: 50
+    }
+    request_method = "POST"
+    util(path,params,request_method)
+  end
 
   private
 
