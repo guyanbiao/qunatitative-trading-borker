@@ -7,4 +7,8 @@ class User < ApplicationRecord
   validates :first_order_percentage, numericality: { greater_than: 0, less_than_or_equal_to: 1 }, allow_nil: true
   validates_uniqueness_of :webhook_token, allow_blank: true
   validates_length_of :webhook_token, minimum: 10, allow_blank: true
+
+  def exchange_class
+    Exchange::Entry.exchanges[exchange] || Exchange::Huobi
+  end
 end

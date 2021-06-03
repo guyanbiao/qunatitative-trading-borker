@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_01_225625) do
+ActiveRecord::Schema.define(version: 2021_06_03_002316) do
 
   create_table "alert_logs", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(version: 2021_06_01_225625) do
     t.string "bitget_access_key"
     t.string "bitget_secret_key"
     t.string "bitget_pass_phrase"
+    t.string "exchange"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

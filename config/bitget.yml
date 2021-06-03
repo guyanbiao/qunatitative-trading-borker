@@ -1,0 +1,6 @@
+test:
+  host: 'https://bitget.test.com'
+development:
+  host: 'https://capi.bitgetapi.com'
+production:
+  host: 'https://capi.bitgetapi.com'

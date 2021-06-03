@@ -6,19 +6,6 @@ class Exchange::Huobi < Exchange::Base
     @currency = currency
   end
 
-  def order_info(order_id)
-    client.order_info(contract_code: contract_code, client_order_id: order_id)
-  end
-
-  def success?(response)
-    response['status'] == 'ok'
-  end
-
-  def order_placed?(response)
-    data = response['data'].first
-    response['status'] == 'ok' && data['status'] == UsdtStandardOrder::RemoteStatus::FINISHED
-  end
-
   def balance
     begin
       result = client.contract_balance('USDT')
@@ -41,6 +28,11 @@ class Exchange::Huobi < Exchange::Base
       order_price_type: order_price_type
     )
     Exchange::Huobi::PlaceOrderResponse.new(result)
+  end
+
+  def order_info(order_id)
+    result = client.order_info(contract_code: contract_code, client_order_id: order_id)
+    Exchange::Huobi::OrderInfoResponse.new(result)
   end
 
   def has_position?

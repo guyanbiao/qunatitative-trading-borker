@@ -67,14 +67,13 @@ class PlaceOrderService
       response: remote_order_info,
       user_id: user.id
     )
-    if exchange.success?(remote_order_info)
+    if remote_order_info.success?
       order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
-      data = remote_order_info['data'].first
       order.update(
-        open_price: data['price'],
-        remote_status: data['status']
+        open_price: remote_order_info.price,
+        remote_status: remote_order_info.status
       )
-      if data['status'] == UsdtStandardOrder::RemoteStatus::FINISHED
+      if remote_order_info.status == UsdtStandardOrder::RemoteStatus::FINISHED
         order_execution.open_confirm
         order_execution.save!
       end
@@ -93,22 +92,21 @@ class PlaceOrderService
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'query_close_position',
-      response: remote_order_info,
+      response: remote_order_info.response,
       user_id: user.id
     )
-    data = remote_order_info['data'].first
-    if exchange.order_placed?(remote_order_info)
+    if remote_order_info.order_placed?
       ActiveRecord::Base.transaction do
         order_execution.close_finish
         order_execution.save!
         close_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
         close_order.finish
         close_order.assign_attributes(
-          profit: data['profit'],
-          real_profit: data['real_profit'],
-          trade_avg_price: data['trade_avg_price'],
-          fee: data['fee'],
-          remote_status: data['status']
+          profit: remote_order_info.profit,
+          real_profit: remote_order_info.real_profit,
+          trade_avg_price: remote_order_info.trade_avg_price,
+          fee: remote_order_info.fee,
+          remote_status: remote_order_info.status
         )
         close_order.save!
       end

@@ -1,4 +1,8 @@
 class BitGetApiClient
+  def self.host
+    @host ||= Rails.application.config_for(:bitget)[:host]
+  end
+
   GET = 'GET'
   POST = 'POST'
   API_URL = 'https://capi.bitgetapi.com'
@@ -12,38 +16,41 @@ class BitGetApiClient
     @pass_phrase = user.bitget_pass_phrase
   end
 
-  def contract_balance(currency)
-    path = '/api/swap/v3/account/accounts'
-    result = request('GET', path, {})
-    ApiClients::Bitget::Responses::ContractBalance.new(result)
-  end
-
-  def contract_info(contract_code)
-    symbol = "cmt_#{contract_code.downcase}usdt"
-    path = '/api/swap/v3/market/contracts'
-    result = request('GET', path, {})
-  end
-
-  def contracts
-    path = '/api/swap/v3/market/contracts'
-    request('GET', path, {})
-  end
-
   def accounts
     path = '/api/swap/v3/account/accounts'
     request('GET', path, {})
+  end
+
+  def place_order(symbol:, client_order_id:, size:, type:, order_type:, match_price:, price: )
+    path = '/api/swap/v3/order/placeOrder'
+    params = {
+      symbol: symbol,
+      client_oid: client_order_id,
+      size: size,
+      type: type,
+      order_type: order_type,
+      match_price: match_price,
+      price: price
+    }
+    request('POST', path, params)
   end
 
   def request(method, request_path, params)
     if method == GET
       request_path = request_path + parse_params_to_str(params)
     end
-    url = API_URL + request_path
-    body = (method == POST) ? params : nil
+    url = BitGetApiClient.host + request_path
+    body = (method == POST) ? params.to_json : nil
     timestamp = (Time.now.to_f * 1000).round.to_s
     sign = get_sign(pre_hash(timestamp, method, request_path, body.to_s), @secret_key)
     header = get_header(sign, timestamp)
-    JSON.parse(HTTParty.get(url, headers: header).body)
+    if method == GET
+      result = HTTParty.get(url, headers: header)
+    else
+      result = HTTParty.post(url, body: body, headers: header, debug_output: STDOUT)
+    end
+
+    JSON.parse(result.body)
   end
 
   def parse_params_to_str(params)
