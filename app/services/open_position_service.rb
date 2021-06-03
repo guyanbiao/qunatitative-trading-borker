@@ -2,11 +2,12 @@ class OpenPositionService
   DEFAULT_LEVER_RATE = 100
   DEFAULT_PERCENTAGE = 0.005.to_d
   MAX_CONTINUOUS_FAILURE_TIMES = 5
-  attr_reader :user, :currency
+  attr_reader :user, :currency, :exchange
 
-  def initialize(user, currency)
+  def initialize(user, currency, exchange)
     @user = user
     @currency = currency
+    @exchange = exchange
   end
 
   def calculate_open_position_volume
@@ -14,14 +15,7 @@ class OpenPositionService
   end
 
   def balance
-    @balance ||=
-      begin
-        result = client.contract_balance('USDT')
-        balance = result['data'].find {|i| i['valuation_asset'] == 'USDT'}
-        balance['balance'].to_d
-      rescue
-        0.to_d
-      end
+    exchange.balance
   end
 
   def lever_rate
@@ -29,12 +23,7 @@ class OpenPositionService
   end
 
   def close_orders
-    # revere order
-    @close_orders ||=
-      begin
-        result = client.history(contract_code)['data']['trades']
-        result.select {|t| t['offset'] == 'close'}
-      end
+    exchange.orders_closed
   end
 
   def last_order
@@ -49,9 +38,9 @@ class OpenPositionService
   def open_order_percentage
     @open_order_percentage ||=
       begin
-        return default_percentage unless close_orders.length > 0
+        return default_percentage unless exchange.has_history?
 
-        if profit?(last_order)
+        if exchange.last_order_profit?
           default_percentage
         else
           if continuous_fail_times > MAX_CONTINUOUS_FAILURE_TIMES
@@ -72,7 +61,7 @@ class OpenPositionService
   end
 
   def contract_unit_price
-    client.contract_info(contract_code)['data'].last['contract_size'].to_d
+    information.contract_unit_price
   end
 
   def contract_code
@@ -84,8 +73,7 @@ class OpenPositionService
   end
 
   def continuous_fail_times
-    latest_profile_order = close_orders.find {|o| profit?(o)}
-    close_orders.index(latest_profile_order)
+    exchange.continuous_fail_times
   end
 
   def last_finished_close_order
@@ -93,10 +81,6 @@ class OpenPositionService
   end
 
   private
-  def client
-    @client ||= HuobiClient.new(user)
-  end
-
   def information
     @information ||= HuobiInformationService.new(user, currency)
   end

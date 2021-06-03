@@ -21,7 +21,8 @@ class WebhookHandlingService
       currency: currency,
       direction: alert_params[:direction]
     )
-    PlaceOrderService.new(user, order_execution).execute
+    exchange = Exchange::Huobi.new(user, currency)
+    PlaceOrderService.new(user, order_execution, exchange).execute
   end
 
   def create_webhook_log

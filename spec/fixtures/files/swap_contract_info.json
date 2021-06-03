@@ -1,1 +1,12 @@
-{"status":"ok","data":[{"symbol":"BTC","contract_code":"BTC-USDT","contract_size":0.001,"price_tick":0.1,"delivery_time":"","create_date":"20201021","contract_status":1,"settlement_date":"1621756800000","support_margin_mode":"all"}],"ts":1621748791090}
+{"status":"ok","data":[
+  {"symbol":"BTC",
+    "contract_code":"BTC-USDT",
+    "contract_size":0.001,
+    "price_tick":0.1,
+    "delivery_time":"",
+    "create_date":"20201021",
+    "contract_status":1,
+    "settlement_date":"1621756800000",
+    "support_margin_mode":"all"
+  }
+],"ts":1621748791090}

@@ -5,7 +5,8 @@ class OrderExecutionsController < ApplicationController
 
   def new
     @default_option = params[:symbol].present? ? params[:symbol].upcase : Setting.support_currencies.first
-    @ops = OpenPositionService.new(current_user, @default_option)
+    exchange = ExchangeHuobi.new(current_user, @default_option)
+    @ops = OpenPositionService.new(current_user, @default_option, exchange)
     @order_execution = OrderExecution.new(currency: @default_option)
   end
 
@@ -29,9 +30,5 @@ class OrderExecutionsController < ApplicationController
 
   def per_page
     20
-  end
-
-  def price_service
-    HuobiInformationService.new(current_user, @default_option)
   end
 end

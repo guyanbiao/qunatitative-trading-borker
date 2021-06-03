@@ -17,12 +17,13 @@ class PlaceOrderService
   DEFAULT_LEVER_RATE = 100
   MAX_CONTINUOUS_FAILURE_TIMES = 5
 
-  attr_reader :order_execution, :currency, :request_direction, :user
-  def initialize(user, order_execution)
+  attr_reader :order_execution, :currency, :request_direction, :user, :exchange
+  def initialize(user, order_execution, exchange)
     @user = user
     @order_execution = order_execution
     @currency = order_execution.currency.upcase
     @request_direction = order_execution.direction
+    @exchange = exchange
   end
 
   def execute
@@ -59,14 +60,14 @@ class PlaceOrderService
   end
 
   def handle_open_order_placed(client_order_id)
-    remote_order_info = client.order_info(contract_code: contract_code, client_order_id: client_order_id)
+    remote_order_info = exchange.order_info(client_order_id)
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'query_open_position',
       response: remote_order_info,
       user_id: user.id
     )
-    if remote_order_info['status'] == 'ok'
+    if exchange.success?(remote_order_info)
       order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
       data = remote_order_info['data'].first
       order.update(
@@ -88,7 +89,7 @@ class PlaceOrderService
   end
 
   def handle_close_order_placed(client_order_id)
-    remote_order_info = client.order_info(contract_code: contract_code, client_order_id: client_order_id)
+    remote_order_info = exchange.order_info(client_order_id)
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'query_close_position',
@@ -96,7 +97,7 @@ class PlaceOrderService
       user_id: user.id
     )
     data = remote_order_info['data'].first
-    if remote_order_info['status'] == 'ok' && data['status'] == UsdtStandardOrder::RemoteStatus::FINISHED
+    if exchange.order_placed?(remote_order_info)
       ActiveRecord::Base.transaction do
         order_execution.close_finish
         order_execution.save!
@@ -127,7 +128,7 @@ class PlaceOrderService
   end
 
   def has_position?
-    remote_orders.count > 0
+    exchange.has_position?
   end
 
   def has_local_position?
@@ -136,39 +137,15 @@ class PlaceOrderService
   def has_remote_position?
   end
 
-  def remote_orders
-    @remote_orders ||= client.current_position(contract_code)['data']
-    # {"symbol"=>"ETH",
-    #  "contract_code"=>"ETH-USDT",
-    #  "volume"=>1.0,
-    #  "available"=>1.0,
-    #  "frozen"=>0.0,
-    #  "cost_open"=>2756.0,
-    #  "cost_hold"=>2756.0,
-    #  "profit_unreal"=>-0.0359,
-    #  "profit_rate"=>-0.006513062409288825,
-    #  "lever_rate"=>5,
-    #  "position_margin"=>5.50482,
-    #  "direction"=>"buy",
-    #  "profit"=>-0.0359,
-    #  "last_price"=>2752.41,
-    #  "margin_asset"=>"USDT",
-    #  "margin_mode"=>"cross",
-    #  "margin_account"=>"USDT"}
-  end
-
-  def remote_orders_count
-  end
-
   def close_position(client_order_id)
-    ro = remote_orders.first
+    ro = exchange.current_position
     remote_order = RemoteUsdtStandardOrder.new(
       id: nil,
       user_id: user.id,
       contract_code: contract_code,
-      lever_rate: ro['lever_rate'],
-      volume: ro['volume'].to_i,
-      direction: ro['direction']
+      lever_rate: ro.lever_rate,
+      volume: ro.volume,
+      direction: ro.direction
     )
     result = ClosePositionService.new(remote_order, client_order_id, order_execution_id: order_execution.id).execute
     OrderExecutionLog.create!(
@@ -192,29 +169,26 @@ class PlaceOrderService
 
   def open_position(client_order_id)
     volume = calculate_open_position_volume
-    result = client.contract_place_order(
-      order_id: client_order_id,
-      contract_code: contract_code,
-      price: nil,
+    result = exchange.place_order(
+      client_order_id: client_order_id,
       volume: volume,
       direction: request_direction,
       offset: 'open',
-      lever_rate: lever_rate,
-      order_price_type: order_price_type
+      lever_rate: lever_rate
     )
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'open_position',
-      response: result,
+      response: result.response,
       user_id: user.id
     )
-    if result['status']  == 'ok'
+    if result.success?
       ActiveRecord::Base.transaction do
         order_execution.open_order
         order_execution.save!
         create_order!(
           client_order_id: client_order_id,
-          remote_order_id: result['data']['order_id'],
+          remote_order_id: result.order_id,
           direction: request_direction,
           offset: 'open',
           volume: volume,
@@ -222,7 +196,7 @@ class PlaceOrderService
       end
       handle_open_order_placed(client_order_id)
     else
-      Rails.logger.info("[open position fail] result = #{result}")
+      Rails.logger.info("[open position fail] result = #{result.response}")
       puts result
     end
   end
@@ -244,7 +218,7 @@ class PlaceOrderService
   end
 
   def open_position_service
-    @open_position_service ||= OpenPositionService.new(user, currency)
+    @open_position_service ||= OpenPositionService.new(user, currency, exchange)
   end
 
   def calculate_open_position_volume
@@ -252,13 +226,7 @@ class PlaceOrderService
   end
 
   def balance
-    begin
-      result = client.contract_balance('USDT')
-      balance = result['data'].find {|i| i['valuation_asset'] == 'USDT'}
-      balance['balance'].to_d
-    rescue
-      0.to_d
-    end
+    exchange.balance
   end
 
   def lever_rate
@@ -271,9 +239,5 @@ class PlaceOrderService
 
   def contract_code
     "#{currency}-USDT"
-  end
-
-  def client
-    @client ||= HuobiClient.new(user)
   end
 end

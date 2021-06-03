@@ -24,7 +24,8 @@ RSpec.describe PlaceOrderService do
         direction: 'buy',
         user_id: @user.id
       )
-      service = PlaceOrderService.new(@user, order_execution)
+      exchange = Exchange::Huobi.new(@user, 'BTC')
+      service = PlaceOrderService.new(@user, order_execution, exchange)
       expect(service.lever_rate).to eq(100)
       expect(service.balance).to eq('68.839155724155396568'.to_d)
       expect(service.open_position_service.open_order_percentage).to eq('0.005'.to_d)
@@ -40,8 +41,8 @@ RSpec.describe PlaceOrderService do
       direction: 'buy',
       user_id: @user.id
     )
-
-    PlaceOrderService.new(@user, order_execution).execute
+    exchange = Exchange::Huobi.new(@user, 'BTC')
+    PlaceOrderService.new(@user, order_execution, exchange).execute
 
     # order
     expect(UsdtStandardOrder.count).to eq(1)
@@ -77,7 +78,8 @@ RSpec.describe PlaceOrderService do
       user_id: @user.id
     )
 
-    PlaceOrderService.new(@user, order_execution).execute
+    exchange = Exchange::Huobi.new(@user, 'BTC')
+    PlaceOrderService.new(@user, order_execution, exchange).execute
 
     # update exist open order
     first_order.reload
@@ -154,7 +156,8 @@ RSpec.describe PlaceOrderService do
         direction: 'buy',
         user_id: @user.id
       )
-      service = PlaceOrderService.new(@user, order_execution)
+      exchange = Exchange::Huobi.new(@user, 'BTC')
+      service = PlaceOrderService.new(@user, order_execution, exchange)
       expect(service.open_position_service.send(:continuous_fail_times)).to eq(0)
       expect(service.open_position_service.send(:open_order_percentage)).to eq(0.005.to_d)
     end
