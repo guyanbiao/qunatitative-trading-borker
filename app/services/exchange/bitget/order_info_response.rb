@@ -1,24 +1,24 @@
 class Exchange::Bitget::OrderInfoResponse < Exchange::Bitget::BaseResponse
-  ORDER_FINISHED_STATUS = 2
+
   def order_placed?
     # 订单状态( -1:撤销成功 0:等待成交 1:部分成交 2:完全成交)
-    success? && data['status'] == ORDER_FINISHED_STATUS
+    success? && data['status'] == ::Exchange::Bitget::OrderStatus::ORDER_FINISHED_STATUS
   end
 
   def profit
-    data['totalProfits']
+    data['totalProfits'].to_d
   end
 
   def real_profit
-    data['totalProfits']
+    data['totalProfits'].to_d
   end
 
   def trade_avg_price
-    data['price_avg']
+    data['price_avg'].to_d
   end
 
   def fee
-    data['fee']
+    data['fee'].to_d
   end
 
   def status
@@ -26,6 +26,6 @@ class Exchange::Bitget::OrderInfoResponse < Exchange::Bitget::BaseResponse
   end
 
   def price
-    data['price']
+    data['price'].to_d
   end
 end

@@ -1,5 +1,16 @@
 class Exchange::Bitget
   attr_reader :user, :currency
+  module OrderStatus
+    ORDER_FINISHED_STATUS = '2'
+  end
+
+  module OrderType
+    # type 1:开多 2:开空 3:平多 4:平空
+    OPEN_BUY = '1'
+    OPEN_SELL = '2'
+    CLOSE_SELL = '3'
+    CLOSE_BUY = '4'
+  end
 
   def initialize(user, currency)
     @user = user
@@ -32,7 +43,7 @@ class Exchange::Bitget
   end
 
   def current_position
-    Exchange::Bitget::CurrentPositionResponse.new(client.current_position(contract_code))
+    Exchange::Bitget::CurrentPositionResponse.new(client.current_position(symbol: symbol))
   end
 
   def has_position?
@@ -54,7 +65,7 @@ class Exchange::Bitget
 
   def current_price
     result = client.ticker(symbol)
-    result['data']['best_ask']
+    result['data']['best_ask'].to_d
   end
 
   def contract_size
@@ -66,7 +77,9 @@ class Exchange::Bitget
 
   private
   def profit?(order)
-    order['totalProfits'] > 0
+    # if on order exists, treat it as profit
+    return true if order == nil
+    order['totalProfits'].to_d > 0
   end
 
   def last_closed_order
@@ -76,7 +89,8 @@ class Exchange::Bitget
 
   def closed_orders
     client.history(symbol: symbol)['data'].select do |x|
-      x['status'] == 2 && (x['type'] == 3 || x['type'] == 4)
+      x['status'] == OrderStatus::ORDER_FINISHED_STATUS &&
+        (x['type'] == OrderType::CLOSE_BUY || x['type'] == OrderType::CLOSE_SELL)
     end
   end
 
@@ -95,16 +109,16 @@ class Exchange::Bitget
     case [offset, direction]
     when %w[open buy]
       # 开多
-      1
+      OrderType::OPEN_BUY
     when %w[open sell]
       # 开空
-      2
+      OrderType::OPEN_SELL
     when %w[close sell]
       # 平多
-      3
+      OrderType::CLOSE_SELL
     when %w[close buy]
       # 平空
-      4
+      OrderType::CLOSE_BUY
     end
   end
 

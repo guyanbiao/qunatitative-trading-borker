@@ -15,6 +15,72 @@ module BitgetHelper
       headers: {}
     )
   end
+
+  def stub_bitget_place_order
+    r = Regexp.new(
+      "#{host}/api/swap/v3/order/placeOrder"
+    )
+    stub_request(:post, r).to_return(
+      status: 200,
+      body: file_fixture('bitget/order_place_order.json'),
+      headers: {}
+    )
+  end
+
+  def stub_bitget_order_info
+    r = Regexp.new(
+      "#{host}/api/swap/v3/order/detail\\?.*"
+    )
+    stub_request(:get, r).to_return(
+      status: 200,
+      body: file_fixture('bitget/order_detail.json'),
+      headers: {}
+    )
+  end
+
+  def stub_bitget_current_position
+    r = Regexp.new(
+      "#{host}/api/swap/v3/position/singlePosition\\?.*"
+    )
+    stub_request(:get, r).to_return(
+      status: 200,
+      body: file_fixture('bitget/position_single_position.json'),
+      headers: {}
+    )
+  end
+
+  def stub_bitget_history
+    r = Regexp.new(
+      "#{host}/api/swap/v3/order/history\\?.*"
+    )
+    stub_request(:get, r).to_return(
+      status: 200,
+      body: file_fixture('bitget/order_history.json'),
+      headers: {}
+    )
+  end
+
+  def stub_bitget_current_price
+    r = Regexp.new(
+      "#{host}/api/swap/v3/market/ticker\\?.*"
+    )
+    stub_request(:get, r).to_return(
+      status: 200,
+      body: file_fixture('bitget/market_ticker.json'),
+      headers: {}
+    )
+  end
+
+  def stub_bitget_contract_size
+    r = Regexp.new(
+      "#{host}/api/swap/v3/market/contracts"
+    )
+    stub_request(:get, r).to_return(
+      status: 200,
+      body: file_fixture('bitget/market_contracts.json'),
+      headers: {}
+    )
+  end
 end
 
 RSpec.configure { |config| config.include BitgetHelper }

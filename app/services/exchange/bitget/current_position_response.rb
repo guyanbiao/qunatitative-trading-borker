@@ -1,6 +1,6 @@
 class Exchange::Bitget::CurrentPositionResponse < Exchange::Bitget::BaseResponse
   def lever_rate
-    first_order['leverage']
+    first_order['leverage'].to_i
   end
 
   def volume
