@@ -8,7 +8,7 @@ class Exchange::Bitget::CurrentPositionResponse < Exchange::Bitget::BaseResponse
   end
 
   def direction
-    if first_order['holdSide']
+    if first_order['holdSide'] == '1'
       'buy'
     else
       'sell'

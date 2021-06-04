@@ -60,11 +60,12 @@ class PlaceOrderService
   end
 
   def handle_open_order_placed(client_order_id)
-    remote_order_info = exchange.order_info(client_order_id)
+    usdt_standard_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
+    remote_order_info = exchange.order_info(usdt_standard_order.remote_order_id)
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'query_open_position',
-      response: remote_order_info,
+      response: remote_order_info.response,
       user_id: user.id
     )
     if remote_order_info.success?
@@ -73,7 +74,7 @@ class PlaceOrderService
         open_price: remote_order_info.price,
         remote_status: remote_order_info.status
       )
-      if remote_order_info.status == UsdtStandardOrder::RemoteStatus::FINISHED
+      if remote_order_info.order_placed?
         order_execution.open_confirm
         order_execution.save!
       end
@@ -88,7 +89,8 @@ class PlaceOrderService
   end
 
   def handle_close_order_placed(client_order_id)
-    remote_order_info = exchange.order_info(client_order_id)
+    usdt_standard_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
+    remote_order_info = exchange.order_info(usdt_standard_order.remote_order_id)
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'query_close_position',
@@ -140,20 +142,20 @@ class PlaceOrderService
     remote_order = RemoteUsdtStandardOrder.new(
       id: nil,
       user_id: user.id,
-      contract_code: contract_code,
+      contract_code: exchange.contract_code,
       lever_rate: ro.lever_rate,
       volume: ro.volume,
       direction: ro.direction
     )
-    result = ClosePositionService.new(remote_order, client_order_id, order_execution_id: order_execution.id).execute
+    result = ClosePositionService.new(remote_order, client_order_id, exchange, order_execution_id: order_execution.id).execute
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'close_position',
-      response: result,
+      response: result.response,
       user_id: user.id
     )
 
-    if result['status']  == 'ok'
+    if result.success?
       order_execution.close
       order_execution.save!
       handle_close_order_placed(client_order_id)
@@ -205,7 +207,7 @@ class PlaceOrderService
       client_order_id: client_order_id,
       remote_order_id: remote_order_id,
       order_execution_id: order_execution.id,
-      contract_code: contract_code,
+      contract_code: exchange.contract_code,
       direction: direction,
       offset: offset,
       lever_rate: lever_rate,
@@ -233,9 +235,5 @@ class PlaceOrderService
 
   def order_price_type
     'opponent'
-  end
-
-  def contract_code
-    "#{currency}-USDT"
   end
 end

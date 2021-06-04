@@ -67,7 +67,7 @@ class BitGetApiClient
 
   private
   def request(method, request_path, params)
-    if method == GET
+    if method == GET && params.length > 0
       request_path = request_path + "?" + parse_params_to_str(params)
     end
     url = BitGetApiClient.host + request_path

@@ -52,6 +52,8 @@ class Exchange::Bitget
 
   def continuous_fail_times
     latest_profile_order = closed_orders.find {|o| profit?(o)}
+    # means all the orders are failed
+    return closed_orders.length unless latest_profile_order
     closed_orders.index(latest_profile_order)
   end
 
@@ -73,6 +75,10 @@ class Exchange::Bitget
     item = result['data'].find {|i| i['symbol'] == symbol}
     raise "price not found #{result}" unless item
     item['contract_val'].to_d
+  end
+
+  def contract_code
+    symbol
   end
 
   private

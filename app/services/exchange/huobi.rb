@@ -30,8 +30,8 @@ class Exchange::Huobi < Exchange::Base
     Exchange::Huobi::PlaceOrderResponse.new(result)
   end
 
-  def order_info(order_id)
-    result = client.order_info(contract_code: contract_code, client_order_id: order_id)
+  def order_info(remote_order_id)
+    result = client.order_info(contract_code: contract_code, order_id: remote_order_id)
     Exchange::Huobi::OrderInfoResponse.new(result)
   end
 
@@ -67,6 +67,10 @@ class Exchange::Huobi < Exchange::Base
     client.contract_info(contract_code)['data'].last['contract_size'].to_d
   end
 
+  def contract_code
+    "#{currency}-USDT"
+  end
+
   private
   def closed_orders
     # revere order
@@ -87,10 +91,6 @@ class Exchange::Huobi < Exchange::Base
 
   def client
     @client ||= HuobiClient.new(user)
-  end
-
-  def contract_code
-    "#{currency}-USDT"
   end
 
   def order_price_type

@@ -5,14 +5,15 @@ class OrderExecutionsController < ApplicationController
 
   def new
     @default_option = params[:symbol].present? ? params[:symbol].upcase : Setting.support_currencies.first
-    exchange = ExchangeHuobi.new(current_user, @default_option)
+    exchange = current_user.exchange_class.new(current_user, @default_option)
     @ops = OpenPositionService.new(current_user, @default_option, exchange)
     @order_execution = OrderExecution.new(currency: @default_option)
   end
 
   def create
     execution = OrderExecution.create!(create_params.merge(user_id: current_user.id))
-    PlaceOrderService.new(current_user, execution).execute
+    exchange = current_user.exchange_class.new(current_user, create_params[:currency])
+    PlaceOrderService.new(current_user, execution, exchange).execute
     redirect_to order_executions_path
   end
 

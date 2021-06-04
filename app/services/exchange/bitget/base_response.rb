@@ -6,8 +6,6 @@ class Exchange::Bitget::BaseResponse
 
   def success?
     response['http_status_code'] == 200
-    # TODO fix this
-    true
   end
 
   def data
