@@ -138,16 +138,7 @@ class PlaceOrderService
   end
 
   def close_position(client_order_id)
-    ro = exchange.current_position
-    remote_order = RemoteUsdtStandardOrder.new(
-      id: nil,
-      user_id: user.id,
-      contract_code: exchange.contract_code,
-      lever_rate: ro.lever_rate,
-      volume: ro.volume,
-      direction: ro.direction
-    )
-    result = ClosePositionService.new(remote_order, client_order_id, exchange, order_execution_id: order_execution.id).execute
+    result = ClosePositionService.new(user, client_order_id, exchange, order_execution_id: order_execution.id).execute
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'close_position',

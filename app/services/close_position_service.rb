@@ -1,10 +1,9 @@
 
 class ClosePositionService
-  # @param order UsdtStandardOrder
-  attr_reader :order, :order_execution_id, :client_order_id, :exchange
+  attr_reader :order_execution_id, :client_order_id, :exchange, :user
 
-  def initialize(order, client_order_id, exchange, order_execution_id: nil)
-    @order = order
+  def initialize(user, client_order_id, exchange, order_execution_id: nil)
+    @user = user
     @order_execution_id = order_execution_id
     @client_order_id = client_order_id
     @exchange = exchange
@@ -12,24 +11,24 @@ class ClosePositionService
 
 
   def execute
-    opposite_direction = order.direction == 'buy'  ? 'sell' : 'buy'
+    opposite_direction = remote_order.direction == 'buy'  ? 'sell' : 'buy'
 
     result = exchange.place_order(
       client_order_id: client_order_id,
-      volume: order.volume,
+      volume: remote_order.volume,
       direction: opposite_direction,
       offset: 'close',
-      lever_rate: order.lever_rate
+      lever_rate: remote_order.lever_rate
       )
     if result.success?
       ActiveRecord::Base.transaction do
         create_order!(
           remote_order_id: result.order_id,
           direction: opposite_direction,
-          parent_order_id: order.id,
+          parent_order_id: remote_order.id,
           offset: 'close',
-          volume: order.volume,
-          lever_rate: order.lever_rate
+          volume: remote_order.volume,
+          lever_rate: remote_order.lever_rate
         )
         yield if block_given?
       end
@@ -43,17 +42,31 @@ class ClosePositionService
       client_order_id: client_order_id,
       remote_order_id: remote_order_id,
       order_execution_id: order_execution_id,
-      contract_code: order.contract_code,
+      contract_code: remote_order.contract_code,
       direction: direction,
       offset: offset,
       lever_rate: lever_rate,
-      order_price_type: order.order_price_type,
+      order_price_type: remote_order.order_price_type,
       parent_order_id: parent_order_id,
-      user_id: order.user_id
+      user_id: remote_order.user_id
     )
   end
 
   def order_price_type
     'opponent'
+  end
+
+  def remote_order
+    @remote_order ||= begin
+      ro = exchange.current_position
+      RemoteUsdtStandardOrder.new(
+        id: nil,
+        user_id: user.id,
+        contract_code: exchange.contract_code,
+        lever_rate: ro.lever_rate,
+        volume: ro.volume,
+        direction: ro.direction
+      )
+    end
   end
 end

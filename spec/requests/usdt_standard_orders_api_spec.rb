@@ -12,6 +12,7 @@ RSpec.describe UsdtStandardOrdersController, type: :request do
   end
 
   it 'works' do
+    stub_user_current_position
     order = UsdtStandardOrder.create!(
       volume: 3,
       client_order_id: 3323,
