@@ -35,9 +35,40 @@ class BitGetApiClient
     request('POST', path, params)
   end
 
+  def order_info(symbol:, remote_order_id:)
+    path = '/api/swap/v3/order/detail'
+    params = {symbol: symbol, orderId: remote_order_id}
+    request('GET', path, params)
+  end
+
+  def current_position(symbol:)
+    path = '/api/swap/v3/position/singlePosition'
+    params = {symbol: symbol}
+    request('GET', path, params)
+  end
+
+  def history(symbol:)
+    path = '/api/swap/v3/order/history'
+    params = {symbol: symbol, pageIndex: 1, pageSize: 100, createDate: 90}
+    request('GET', path, params)
+  end
+
+  def ticker(symbol)
+    path = '/api/swap/v3/market/ticker'
+    params = {symbol: symbol}
+    request('GET', path, params)
+  end
+
+  def contracts_info
+    path = '/api/swap/v3/market/contracts'
+    params = {}
+    request('GET', path, params)
+  end
+
+  private
   def request(method, request_path, params)
     if method == GET
-      request_path = request_path + parse_params_to_str(params)
+      request_path = request_path + "?" + parse_params_to_str(params)
     end
     url = BitGetApiClient.host + request_path
     body = (method == POST) ? params.to_json : nil
@@ -45,12 +76,14 @@ class BitGetApiClient
     sign = get_sign(pre_hash(timestamp, method, request_path, body.to_s), @secret_key)
     header = get_header(sign, timestamp)
     if method == GET
-      result = HTTParty.get(url, headers: header)
+      result = HTTParty.get(url, headers: header, debug_output: STDOUT)
     else
       result = HTTParty.post(url, body: body, headers: header, debug_output: STDOUT)
     end
-
-    JSON.parse(result.body)
+    {
+      'data' => JSON.parse(result.body),
+      'http_status_code' => result.code
+    }
   end
 
   def parse_params_to_str(params)

@@ -11,6 +11,10 @@ class Exchange::Huobi::CurrentPositionResponse < Exchange::Huobi::BaseResponse
     first_order['direction']
   end
 
+  def has_position?
+    data.length > 0
+  end
+
   private
 
   def first_order

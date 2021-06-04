@@ -7,7 +7,7 @@ class Exchange::Bitget
   end
 
   def balance
-    result = client.accounts
+    result = client.accounts['data']
     item = result.find {|x| x['symbol'] == symbol}
     return 0 unless item
     item['total_avail_balance'].to_d
@@ -26,7 +26,60 @@ class Exchange::Bitget
     Exchange::Bitget::PlaceOrderResponse.new(result)
   end
 
+  def order_info(remote_order_id)
+    result = client.order_info(symbol: symbol, remote_order_id: remote_order_id)
+    Exchange::Bitget::OrderInfoResponse.new(result)
+  end
+
+  def current_position
+    Exchange::Bitget::CurrentPositionResponse.new(client.current_position(contract_code))
+  end
+
+  def has_position?
+    current_position.has_position?
+  end
+
+  def continuous_fail_times
+    latest_profile_order = closed_orders.find {|o| profit?(o)}
+    closed_orders.index(latest_profile_order)
+  end
+
+  def has_history?
+    closed_orders.length > 0
+  end
+
+  def last_order_profit?
+    profit?(last_closed_order)
+  end
+
+  def current_price
+    result = client.ticker(symbol)
+    result['data']['best_ask']
+  end
+
+  def contract_size
+    result = client.contracts_info
+    item = result['data'].find {|i| i['symbol'] == symbol}
+    raise "price not found #{result}" unless item
+    item['contract_val'].to_d
+  end
+
   private
+  def profit?(order)
+    order['totalProfits'] > 0
+  end
+
+  def last_closed_order
+    # time revere order
+    closed_orders.first
+  end
+
+  def closed_orders
+    client.history(symbol: symbol)['data'].select do |x|
+      x['status'] == 2 && (x['type'] == 3 || x['type'] == 4)
+    end
+  end
+
   def order_type
     # 0:普通，1：只做maker;2:全部成交或立即取消;3:立即成交并取消剩余
     0

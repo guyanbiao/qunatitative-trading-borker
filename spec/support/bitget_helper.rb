@@ -11,7 +11,7 @@ module BitgetHelper
     )
     stub_request(:get, r).to_return(
       status: 200,
-      body: file_fixture('bitget/accounts.json'),
+      body: file_fixture('bitget/account_accounts.json'),
       headers: {}
     )
   end

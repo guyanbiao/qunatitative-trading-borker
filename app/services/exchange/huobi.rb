@@ -35,12 +35,12 @@ class Exchange::Huobi < Exchange::Base
     Exchange::Huobi::OrderInfoResponse.new(result)
   end
 
-  def has_position?
-    current_position.data.length > 0
-  end
-
   def current_position
     Exchange::Huobi::CurrentPositionResponse.new(client.current_position(contract_code))
+  end
+
+  def has_position?
+    current_position.data.length > 0
   end
 
   def continuous_fail_times
@@ -54,6 +54,17 @@ class Exchange::Huobi < Exchange::Base
 
   def last_order_profit?
     profit?(last_closed_order)
+  end
+
+  def current_price
+    result = client.price_limit(contract_code)
+    item = result['data'].find {|i| i['symbol'] == currency}
+    raise "price not found #{result}" unless item
+    item['high_limit'].to_d
+  end
+
+  def contract_size
+    client.contract_info(contract_code)['data'].last['contract_size'].to_d
   end
 
   private

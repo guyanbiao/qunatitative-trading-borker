@@ -53,15 +53,15 @@ class OpenPositionService
   end
 
   def contract_price
-    @contract_price ||= current_price * contract_unit_price
+    @contract_price ||= current_price * contract_size
   end
 
   def current_price
-    @current_price ||= information.current_price
+    @current_price ||= exchange.current_price
   end
 
-  def contract_unit_price
-    information.contract_unit_price
+  def contract_size
+    exchange.contract_size
   end
 
   def contract_code
@@ -81,9 +81,6 @@ class OpenPositionService
   end
 
   private
-  def information
-    @information ||= HuobiInformationService.new(user, currency)
-  end
 
   def query_service
     Query::UsdtStandardOrderService.new
