@@ -21,6 +21,6 @@ class SettingsController < ApplicationController
   end
 
   def percentage_params
-    params.require(:user).permit(:first_order_percentage, :lever_rate, :webhook_token)
+    params.require(:user).permit(:first_order_percentage, :lever_rate, :webhook_token, :exchange, :receiving_alerts)
   end
 end

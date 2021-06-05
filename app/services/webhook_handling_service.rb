@@ -16,6 +16,7 @@ class WebhookHandlingService
   def execute
     create_webhook_log
     validate!
+    return unless user.receiving_alerts
     order_execution = OrderExecution.create!(
       user_id: user.id,
       currency: currency,
@@ -33,8 +34,14 @@ class WebhookHandlingService
       ip_address: ip_address,
       error_code: error_code,
       error_message: error_message,
-      status: status
+      status: status,
+      ignored: ignored
     )
+  end
+
+  def ignored
+    return true unless user
+    !user.receiving_alerts
   end
 
   def status

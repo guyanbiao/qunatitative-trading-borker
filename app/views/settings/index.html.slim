@@ -30,7 +30,12 @@ h1 其他设置
     label 杠杆率(默认100)
     = f.text_field :lever_rate, placeholder: '100', class: 'form-control'
   div.form-group
+    label 交易所
+    = f.select :exchange, options_for_select([%w[bitget bitget], %w[huobi huobi]], current_user.exchange), {}, class: 'form-control'
+  div.form-group
+    label 是否接收 Tradingview 警报
+    = f.select :receiving_alerts, options_for_select([['接收', true], ['不接收', false]], current_user.receiving_alerts), {}, class: 'form-control'
+  div.form-group
     label webhook_token(用于trading view)
     = f.text_field :webhook_token, class: 'form-control'
   = f.submit '提交', class: 'btn btn-primary'
-

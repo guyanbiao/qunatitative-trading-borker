@@ -3,4 +3,4 @@ test:
 development:
   host: 'redis://127.0.0.1:6379/0'
 production:
-  host: "<% ENV['REDIS_URL'] %>"
+  host: "<%= ENV['REDIS_URL'] %>"
