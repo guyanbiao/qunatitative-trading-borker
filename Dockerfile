@@ -7,10 +7,6 @@ ENV TMP_PATH /tmp/
 ENV RAILS_LOG_TO_STDOUT true
 ENV RAILS_PORT 3000
 
-# copy entrypoint scripts and grant execution permissions
-COPY docker/start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
-
 RUN apk add --no-cache bash && \
   adduser -S -h /home/app app
 
@@ -37,8 +33,12 @@ RUN gem install bundler --version "$BUNDLE_VERSION" \
 ADD Gemfile /home/app/Gemfile
 ADD Gemfile.lock /home/app/Gemfile.lock
 
+
 WORKDIR /home/app
-RUN  bundle install
+RUN bundle config set deployment true
+RUN bundle config set without 'development test'
+RUN bundle config set path vendor/bundle
+RUN bundle install
 
 ADD config.ru /home/app/config.ru
 ADD Rakefile /home/app/Rakefile
@@ -50,6 +50,7 @@ ADD db/schema.rb /home/app/db/schema.rb
 ADD db/seeds.rb /home/app/db/seeds.rb
 ADD config /home/app/config
 ADD config/database.yml /home/app/config/database.yml
+ADD config/redis.yml /home/app/config/redis.yml
 ADD app /home/app/app
 ADD package.json /home/app/package.json
 ADD yarn.lock /home/app/yarn.lock
@@ -65,6 +66,10 @@ ADD .browserslistrc /home/app/.browserslistrc
 # navigate to app directory
 
 EXPOSE $RAILS_PORT
+
+# copy entrypoint scripts and grant execution permissions
+COPY docker/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
 CMD start.sh
 

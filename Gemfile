@@ -81,3 +81,4 @@ gem 'kaminari'
 gem 'rails-settings-cached'
 gem 'devise'
 gem "administrate"
+gem "sidekiq"
