@@ -84,8 +84,7 @@ class PlaceOrderService
   def handle_close_order_finished
     validate_remote_order_count
 
-    client_order_id = generate_order_id
-    open_position(client_order_id)
+    open_position
   end
 
   def handle_close_order_placed(client_order_id)
@@ -158,15 +157,24 @@ class PlaceOrderService
     rand(9223372036854775807)
   end
 
-  def open_position(client_order_id)
+  def open_position
     volume = calculate_open_position_volume
+
+    order = create_order!(
+      direction: request_direction,
+      offset: 'open',
+      volume: volume,
+      lever_rate: lever_rate
+    )
+
     result = exchange.place_order(
-      client_order_id: client_order_id,
+      client_order_id: order.client_order_id,
       volume: volume,
       direction: request_direction,
       offset: 'open',
       lever_rate: lever_rate
     )
+
     OrderExecutionLog.create!(
       order_execution_id: order_execution.id,
       action: 'open_position',
@@ -177,26 +185,23 @@ class PlaceOrderService
       ActiveRecord::Base.transaction do
         order_execution.open_order
         order_execution.save!
-        create_order!(
-          client_order_id: client_order_id,
-          remote_order_id: result.order_id,
-          direction: request_direction,
-          offset: 'open',
-          volume: volume,
-          lever_rate: lever_rate )
+        order.update(remote_order_id: result.order_id)
       end
-      handle_open_order_placed(client_order_id)
+      handle_open_order_placed(order.client_order_id)
     else
       Rails.logger.info("[open position fail] result = #{result.response}")
       puts result
     end
   end
 
-  def create_order!(client_order_id:, remote_order_id:, direction:, offset:, volume:, lever_rate:, parent_order_id: nil)
+  def create_order!(direction:, offset:, volume:, lever_rate:, parent_order_id: nil)
+    order = UsdtStandardOrder.find_by(order_execution_id: order_execution.id, offset: offset)
+    return order if order
+
+    client_order_id = generate_order_id
     UsdtStandardOrder.create!(
       volume: volume,
       client_order_id: client_order_id,
-      remote_order_id: remote_order_id,
       order_execution_id: order_execution.id,
       contract_code: exchange.contract_code,
       direction: direction,

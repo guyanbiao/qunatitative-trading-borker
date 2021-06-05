@@ -5,7 +5,7 @@ class UsdtStandardOrder < ApplicationRecord
     FINISHED = 6
   end
 
-  validates_presence_of :user_id, :remote_order_id
+  validates_presence_of :user_id
 
   include AASM
   aasm column: :status do
