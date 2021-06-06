@@ -79,15 +79,15 @@ class Exchange::Huobi < Exchange::Base
     user.huobi_access_key && user.huobi_secret_key
   end
 
-  private
   def closed_orders
     # revere order
     @closed_orders ||=
       begin
         result = client.history(contract_code)['data']['trades']
-        result.select {|t| t['offset'] == 'close'}
+        result.select {|t| t['offset'] == 'close'}.map {|t| Exchange::Huobi::OrderInfoResponse.new('data' => [t])}
       end
   end
+  private
 
   def last_closed_order
     # time revere order
@@ -106,6 +106,6 @@ class Exchange::Huobi < Exchange::Base
   end
 
   def profit?(order)
-    order['real_profit'] > 0
+    order.real_profit > 0
   end
 end

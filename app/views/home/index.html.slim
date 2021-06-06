@@ -1,0 +1,49 @@
+css:
+  td.buy {color: darkgreen}
+  td.sell {
+    color: darkred
+  }
+h5  #{@exchange.id} - #{@currency} 持仓情况
+- if @position.has_position?
+  table.table
+    thead
+      tr
+        th 持仓数量
+        th 方向
+        th 未实现盈亏
+        th 开仓均价
+        th 杠杆
+        th 平仓
+    tbody
+      tr
+        td #{@position.volume}
+        td class="#{@position.direction}" #{@position.direction == 'buy' ? '做多' : '做空'}
+        td #{@position.unrealized_profit}
+        td #{@position.open_avg_price}
+        td #{@position.lever_rate}
+        td
+          = link_to '平仓', close_position_usdt_standard_orders_path, method: :post, class: 'btn btn-primary'
+- else
+  h6 暂无持仓
+
+h5  #{@exchange.id} - #{@currency} 历史订单
+
+table.table
+  thead
+    tr
+      th symbol
+      th 成交数量
+      th 盈利
+      th 时间
+      th 手续费
+      th 成交均价
+
+  tbody
+    - @orders.each do |o|
+      tr
+        td #{o.symbol}
+        td #{o.closed_volume}
+        td #{o.real_profit}
+        td #{o.created_at}
+        td #{o.fee}
+        td #{o.trade_avg_price}

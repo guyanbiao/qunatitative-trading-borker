@@ -31,7 +31,7 @@ RSpec.describe UsdtStandardOrdersController, type: :request do
 
     stub_place_order
 
-    post "/usdt_standard_orders/#{order.id}/close_position",
+    post "/usdt_standard_orders/close_position",
          params: {
            action: 'test'
          }.to_json

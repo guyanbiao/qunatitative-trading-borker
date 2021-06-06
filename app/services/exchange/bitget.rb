@@ -89,23 +89,26 @@ class Exchange::Bitget
     user.bitget_access_key && user.bitget_secret_key && user.bitget_pass_phrase
   end
 
+  def closed_orders
+    @closed_orders ||=
+      begin
+        client.history(symbol: symbol)['data'].select do |x|
+          x['status'] == OrderStatus::ORDER_FINISHED_STATUS &&
+            (x['type'] == OrderType::CLOSE_BUY || x['type'] == OrderType::CLOSE_SELL)
+        end.map {|x| Exchange::Bitget::OrderInfoResponse.new({'data' => x})}
+      end
+  end
+
   private
   def profit?(order)
     # if on order exists, treat it as profit
     return true if order == nil
-    order['totalProfits'].to_d > 0
+    order.profit.to_d > 0
   end
 
   def last_closed_order
     # time revere order
     closed_orders.first
-  end
-
-  def closed_orders
-    client.history(symbol: symbol)['data'].select do |x|
-      x['status'] == OrderStatus::ORDER_FINISHED_STATUS &&
-        (x['type'] == OrderType::CLOSE_BUY || x['type'] == OrderType::CLOSE_SELL)
-    end
   end
 
   def order_type

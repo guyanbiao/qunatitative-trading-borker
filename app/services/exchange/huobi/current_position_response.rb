@@ -15,6 +15,15 @@ class Exchange::Huobi::CurrentPositionResponse < Exchange::Huobi::BaseResponse
     data.length > 0
   end
 
+  # 未实现收益
+  def unrealized_profit
+    first_order['profit_unreal']
+  end
+
+  def open_avg_price
+    first_order['cost_open']
+  end
+
   private
 
   def first_order

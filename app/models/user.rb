@@ -15,4 +15,12 @@ class User < ApplicationRecord
   def exchange_id
     exchange || 'huobi'
   end
+
+  def get_exchange(currency)
+    exchange_class.new(self, currency)
+  end
+
+  def order_executions
+    OrderExecution.where(user_id: id)
+  end
 end

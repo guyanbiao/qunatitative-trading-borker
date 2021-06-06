@@ -32,7 +32,6 @@
         th 合约张数
         th 杠杆倍数
         th 收益
-        th 操作
     tbody
       tr
         td #{@open_order.direction}
@@ -42,8 +41,6 @@
         td #{@open_order.volume}
         td #{@open_order.lever_rate}
         td #{@open_order.real_profit}
-        td
-          = link_to '平仓', close_position_usdt_standard_order_path(@open_order), method: :post, class: 'btn btn-primary'
 
 h1 操作日志
 table.table

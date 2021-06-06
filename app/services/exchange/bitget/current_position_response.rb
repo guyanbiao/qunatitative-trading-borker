@@ -15,6 +15,14 @@ class Exchange::Bitget::CurrentPositionResponse < Exchange::Bitget::BaseResponse
     end
   end
 
+  def unrealized_profit
+    first_order['unrealized_pnl']
+  end
+
+  def open_avg_price
+    first_order['avg_cost']
+  end
+
   def has_position?
     valid_positions.length > 0
   end

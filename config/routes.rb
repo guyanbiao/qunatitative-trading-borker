@@ -24,11 +24,13 @@ Rails.application.routes.draw do
 
   post "webhooks/alert/:token", to: 'webhooks#alert'
 
+
+
   resources :usdt_standard_orders, only: [:index] do
-    member do
+    collection do
       post :close_position
     end
   end
 
-  root to: 'order_executions#index'
+  root to: 'home#index'
 end
