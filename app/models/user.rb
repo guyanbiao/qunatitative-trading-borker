@@ -9,6 +9,10 @@ class User < ApplicationRecord
   validates_length_of :webhook_token, minimum: 10, allow_blank: true
 
   def exchange_class
-    Exchange::Entry.exchanges[exchange] || Exchange::Huobi
+    Exchange::Entry.exchanges[exchange_id]
+  end
+
+  def exchange_id
+    exchange || 'bitget'
   end
 end

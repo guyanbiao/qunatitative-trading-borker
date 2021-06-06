@@ -54,7 +54,7 @@ ADD config/redis.yml /home/app/config/redis.yml
 ADD app /home/app/app
 ADD package.json /home/app/package.json
 ADD yarn.lock /home/app/yarn.lock
-ADD public/packs /home/app/public/packs
+ADD public/assets /home/app/public/assets
 ADD app/javascript/packs/application.js /home/app/app/javascript/packs/application.js
 ADD config/webpack /home/app/config/webpack
 ADD config/webpacker.yml /home/app/config/webpacker.yml

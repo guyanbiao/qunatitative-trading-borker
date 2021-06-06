@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  require 'sidekiq/web'
+  require 'sidekiq-scheduler/web'
+
+  authenticate :user do
+    mount Sidekiq::Web => '/sidekiq'
+  end
+
   namespace :admin do
       resources :alert_logs
       resources :usdt_standard_orders

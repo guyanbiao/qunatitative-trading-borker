@@ -18,12 +18,11 @@ class PlaceOrderService
   MAX_CONTINUOUS_FAILURE_TIMES = 5
 
   attr_reader :order_execution, :currency, :request_direction, :user, :exchange
-  def initialize(user, order_execution, exchange)
+  def initialize(user, order_execution)
     @user = user
     @order_execution = order_execution
     @currency = order_execution.currency.upcase
     @request_direction = order_execution.direction
-    @exchange = exchange
   end
 
   def execute
@@ -209,7 +208,8 @@ class PlaceOrderService
       lever_rate: lever_rate,
       order_price_type: order_price_type,
       parent_order_id: parent_order_id,
-      user_id: user.id
+      user_id: user.id,
+      exchange_id: exchange.id
     )
   end
 
@@ -231,5 +231,9 @@ class PlaceOrderService
 
   def order_price_type
     'opponent'
+  end
+
+  def exchange
+    Exchange::Entry.find(order_execution.exchange_id).new(user, currency)
   end
 end

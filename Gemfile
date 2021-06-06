@@ -82,3 +82,4 @@ gem 'rails-settings-cached'
 gem 'devise'
 gem "administrate"
 gem "sidekiq"
+gem 'sidekiq-scheduler'

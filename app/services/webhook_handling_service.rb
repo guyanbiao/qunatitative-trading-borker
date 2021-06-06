@@ -17,13 +17,14 @@ class WebhookHandlingService
     create_webhook_log
     validate!
     return unless user.receiving_alerts
+    exchange = user.exchange_class.new(user, currency)
     order_execution = OrderExecution.create!(
       user_id: user.id,
       currency: currency,
-      direction: alert_params[:direction]
+      direction: alert_params[:direction],
+      exchange_id: exchange.id
     )
-    exchange = user.exchange_class.new(user, currency)
-    PlaceOrderService.new(user, order_execution, exchange).execute
+    PlaceOrderService.new(user, order_execution).execute
   end
 
   def create_webhook_log

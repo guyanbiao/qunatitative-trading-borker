@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_05_100047) do
+ActiveRecord::Schema.define(version: 2021_06_05_224427) do
 
   create_table "alert_logs", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
@@ -36,12 +36,13 @@ ActiveRecord::Schema.define(version: 2021_06_05_100047) do
   end
 
   create_table "order_executions", force: :cascade do |t|
-    t.bigint "user_id"
+    t.integer "user_id"
     t.string "status"
     t.string "currency"
     t.string "direction"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "exchange_id"
     t.index ["user_id"], name: "index_order_executions_on_user_id"
   end
 
@@ -55,26 +56,27 @@ ActiveRecord::Schema.define(version: 2021_06_05_100047) do
 
   create_table "usdt_standard_orders", force: :cascade do |t|
     t.string "contract_code"
-    t.bigint "remote_order_id"
-    t.bigint "client_order_id"
-    t.bigint "user_id"
+    t.integer "remote_order_id"
+    t.integer "client_order_id"
+    t.integer "user_id"
     t.decimal "open_price"
     t.decimal "close_price"
-    t.bigint "volume"
+    t.integer "volume"
     t.string "direction"
     t.string "offset"
     t.string "order_price_type"
     t.string "status"
     t.integer "remote_status"
-    t.bigint "parent_order_id"
-    t.bigint "order_execution_id"
-    t.bigint "lever_rate"
+    t.integer "parent_order_id"
+    t.integer "order_execution_id"
+    t.integer "lever_rate"
     t.decimal "profit"
     t.decimal "real_profit"
     t.decimal "trade_avg_price"
     t.decimal "fee"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "exchange_id"
     t.index ["client_order_id"], name: "index_usdt_standard_orders_on_client_order_id", unique: true
     t.index ["remote_order_id"], name: "index_usdt_standard_orders_on_remote_order_id"
     t.index ["user_id"], name: "index_usdt_standard_orders_on_user_id"

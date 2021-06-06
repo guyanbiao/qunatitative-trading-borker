@@ -48,7 +48,8 @@ class ClosePositionService
       lever_rate: lever_rate,
       order_price_type: remote_order.order_price_type,
       parent_order_id: parent_order_id,
-      user_id: remote_order.user_id
+      user_id: remote_order.user_id,
+      exchange_id: exchange.id
     )
   end
 

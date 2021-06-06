@@ -1,0 +1,3 @@
+SweepPendingWithdrawalsJob:
+  class: FinishOrderExecutionsJob
+  cron: "*/20 * * * * *"

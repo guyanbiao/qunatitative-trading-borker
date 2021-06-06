@@ -11,9 +11,9 @@ class OrderExecutionsController < ApplicationController
   end
 
   def create
-    execution = OrderExecution.create!(create_params.merge(user_id: current_user.id))
+    execution = OrderExecution.create!(create_params.merge(user_id: current_user.id, exchange_id: current_user.exchange_id))
     exchange = current_user.exchange_class.new(current_user, create_params[:currency])
-    PlaceOrderService.new(current_user, execution, exchange).execute
+    PlaceOrderService.new(current_user, execution).execute
     redirect_to order_executions_path
   end
 

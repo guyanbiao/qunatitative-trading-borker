@@ -22,10 +22,11 @@ RSpec.describe PlaceOrderService do
       order_execution = OrderExecution.create!(
         currency: 'BTC',
         direction: 'buy',
-        user_id: @user.id
+        user_id: @user.id,
+        exchange_id: 'huobi'
       )
       exchange = Exchange::Huobi.new(@user, 'BTC')
-      service = PlaceOrderService.new(@user, order_execution, exchange)
+      service = PlaceOrderService.new(@user, order_execution)
       expect(service.lever_rate).to eq(100)
       expect(service.balance).to eq('68.839155724155396568'.to_d)
       expect(service.open_position_service.open_order_percentage).to eq('0.005'.to_d)
@@ -39,10 +40,11 @@ RSpec.describe PlaceOrderService do
     order_execution = OrderExecution.create!(
       currency: 'BTC',
       direction: 'buy',
-      user_id: @user.id
+      user_id: @user.id,
+      exchange_id: 'huobi'
     )
     exchange = Exchange::Huobi.new(@user, 'BTC')
-    PlaceOrderService.new(@user, order_execution, exchange).execute
+    PlaceOrderService.new(@user, order_execution).execute
 
     # order
     expect(UsdtStandardOrder.count).to eq(1)
@@ -69,17 +71,19 @@ RSpec.describe PlaceOrderService do
       order_price_type: 'opponent',
       open_price: 10,
       close_price: 20,
-      user_id: @user.id
+      user_id: @user.id,
+      exchange_id: 'huobi'
     )
 
     order_execution = OrderExecution.create!(
       currency: 'BTC',
       direction: 'sell',
-      user_id: @user.id
+      user_id: @user.id,
+      exchange_id: 'huobi'
     )
 
     exchange = Exchange::Huobi.new(@user, 'BTC')
-    PlaceOrderService.new(@user, order_execution, exchange).execute
+    PlaceOrderService.new(@user, order_execution).execute
 
     # update exist open order
     first_order.reload
@@ -116,7 +120,8 @@ RSpec.describe PlaceOrderService do
         close_price: 20,
         real_profit: -3,
         user_id: @user.id,
-        status: 'done'
+        status: 'done',
+        exchange_id: 'huobi'
       )
       UsdtStandardOrder.create(
         volume: 3,
@@ -132,7 +137,8 @@ RSpec.describe PlaceOrderService do
         close_price: 20,
         real_profit: 3,
         user_id: @user.id,
-        status: 'done'
+        status: 'done',
+        exchange_id: 'huobi'
       )
       UsdtStandardOrder.create(
         volume: 3,
@@ -148,16 +154,17 @@ RSpec.describe PlaceOrderService do
         close_price: 20,
         real_profit: -3,
         user_id: @user.id,
-        status: 'done'
+        status: 'done',
+        exchange_id: 'huobi'
       )
 
       order_execution = OrderExecution.create!(
         currency: 'BTC',
         direction: 'buy',
-        user_id: @user.id
+        user_id: @user.id,
+        exchange_id: 'huobi'
       )
-      exchange = Exchange::Huobi.new(@user, 'BTC')
-      service = PlaceOrderService.new(@user, order_execution, exchange)
+      service = PlaceOrderService.new(@user, order_execution)
       expect(service.open_position_service.send(:continuous_fail_times)).to eq(0)
       expect(service.open_position_service.send(:open_order_percentage)).to eq(0.005.to_d)
     end

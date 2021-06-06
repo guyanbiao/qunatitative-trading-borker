@@ -17,6 +17,10 @@ class Exchange::Bitget
     @currency = currency
   end
 
+  def id
+    'bitget'
+  end
+
   def balance
     result = client.accounts['data']
     item = result.find {|x| x['symbol'] == symbol}

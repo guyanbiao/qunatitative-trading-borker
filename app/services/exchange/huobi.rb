@@ -6,6 +6,10 @@ class Exchange::Huobi < Exchange::Base
     @currency = currency
   end
 
+  def id
+    'huobi'
+  end
+
   def balance
     begin
       result = client.contract_balance('USDT')

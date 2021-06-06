@@ -25,7 +25,8 @@ RSpec.describe UsdtStandardOrdersController, type: :request do
       order_price_type: 'opponent',
       open_price: 10,
       close_price: 20,
-      user_id: @user.id
+      user_id: @user.id,
+      exchange_id: 'huobi'
     )
 
     stub_place_order
