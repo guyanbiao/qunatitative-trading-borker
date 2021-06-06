@@ -13,6 +13,6 @@ class User < ApplicationRecord
   end
 
   def exchange_id
-    exchange || 'bitget'
+    exchange || 'huobi'
   end
 end
