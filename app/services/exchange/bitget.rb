@@ -85,6 +85,10 @@ class Exchange::Bitget
     symbol
   end
 
+  def credentials_set?
+    user.bitget_access_key && user.bitget_secret_key && user.bitget_pass_phrase
+  end
+
   private
   def profit?(order)
     # if on order exists, treat it as profit

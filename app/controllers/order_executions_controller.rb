@@ -6,6 +6,11 @@ class OrderExecutionsController < ApplicationController
   def new
     @default_option = params[:symbol].present? ? params[:symbol].upcase : Setting.support_currencies.first
     exchange = current_user.exchange_class.new(current_user, @default_option)
+    unless exchange.credentials_set?
+      flash[:alert] = "请先设置 #{exchange.id} 交易所的密钥"
+      redirect_to(settings_path)
+      return
+    end
     @ops = OpenPositionService.new(current_user, @default_option, exchange)
     @order_execution = OrderExecution.new(currency: @default_option)
   end

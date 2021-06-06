@@ -75,6 +75,10 @@ class Exchange::Huobi < Exchange::Base
     "#{currency}-USDT"
   end
 
+  def credentials_set?
+    user.huobi_access_key && user.huobi_secret_key
+  end
+
   private
   def closed_orders
     # revere order
@@ -98,6 +102,7 @@ class Exchange::Huobi < Exchange::Base
   end
 
   def order_price_type
+    'opponent'
   end
 
   def profit?(order)

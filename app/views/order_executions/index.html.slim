@@ -6,6 +6,7 @@ table.table
       th ID
       th status
       th 币对
+      th 交易所
       th 方向
       th 操作
   tbody
@@ -14,6 +15,7 @@ table.table
         td #{o.id}
         td #{o.status}
         td #{o.currency}
+        td #{o.exchange_id}
         td #{o.direction}
         td
           = link_to '详情', order_execution_path(o.id), class: 'btn'

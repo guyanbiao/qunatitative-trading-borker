@@ -3,10 +3,7 @@ class SettingsController < ApplicationController
   end
 
   def create
-    current_user.update(
-      huobi_access_key: params[:access_key],
-      huobi_secret_key: params[:secret_key]
-    )
+    current_user.update(create_params.select {|k, v| v.present?} )
     flash[:notice] = '更新成功'
     redirect_back(fallback_location: '/settings')
   end
@@ -22,5 +19,9 @@ class SettingsController < ApplicationController
 
   def percentage_params
     params.require(:user).permit(:first_order_percentage, :lever_rate, :webhook_token, :exchange, :receiving_alerts)
+  end
+
+  def create_params
+    params.permit(:huobi_access_key, :huobi_secret_key, :bitget_access_key, :bitget_secret_key, :bitget_pass_phrase)
   end
 end

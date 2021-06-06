@@ -2,22 +2,43 @@ h1 API key 设置
 table.table
   thead
     tr
-      td access_key
-      td secret_key
+      td huobi_access_key
+      td huobi_secret_key
+      td bitget_access_key
+      td bitget_secret_key
   tbody
     tr
-      td xxxxxxxxx#{current_user.huobi_access_key.to_s.last(3)}
-      td xxxxxxxxx#{current_user.huobi_secret_key.to_s.last(3)}
+      td
+        |*****#{current_user.huobi_access_key.to_s.last(3)}
+      td
+        |*****#{current_user.huobi_secret_key.to_s.last(3)}
+      td
+        |*****#{current_user.bitget_access_key.to_s.last(3)}
+      td
+        |*****#{current_user.bitget_secret_key.to_s.last(3)}
+
 
 = form_for :settings, url: '/settings', html: {class: 'form'} do
+  h3 huobi
   div.form-group
     label access_key
-    = text_field_tag :access_key, nil, placeholder: 'access_key', class: 'form-control'
-  br
+    = text_field_tag :huobi_access_key, nil, placeholder: 'access_key', class: 'form-control'
   div.form-group
     label secret_key
-    = text_field_tag :secret_key, nil, placeholder: 'secret_key', class: 'form-control'
-  br
+    = text_field_tag :huobi_secret_key, nil, placeholder: 'secret_key', class: 'form-control'
+
+  h3 bitget
+  div.form-group
+    label secret_key
+    = text_field_tag :bitget_access_key, nil, placeholder: 'bitget_access_key', class: 'form-control'
+  div.form-group
+    label secret_key
+    = text_field_tag :bitget_secret_key, nil, placeholder: 'bitget_secret_key', class: 'form-control'
+  div.form-group
+    label bitget_pass_phrase
+    = text_field_tag :bitget_pass_phrase, nil, placeholder: 'bitget_pass_phrase', class: 'form-control'
+
+
   = submit_tag '提交', class: 'btn btn-primary'
 
 br

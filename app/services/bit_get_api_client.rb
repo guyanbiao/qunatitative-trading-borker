@@ -66,6 +66,12 @@ class BitGetApiClient
   end
 
   private
+  def auth_fail?(code, data)
+    return false if code != 400
+    return false unless data['code']
+    data['code'].in? %w[40006 40012]
+  end
+
   def request(method, request_path, params)
     if method == GET && params.length > 0
       request_path = request_path + "?" + parse_params_to_str(params)
@@ -80,8 +86,12 @@ class BitGetApiClient
     else
       result = HTTParty.post(url, body: body, headers: header, debug_output: STDOUT)
     end
+    data = JSON.parse(result.body)
+    if auth_fail?(result.code, data)
+      raise ExchangeClients::Bitget::AuthFailError.new(data)
+    end
     {
-      'data' => JSON.parse(result.body),
+      'data' => data,
       'http_status_code' => result.code
     }
   end
