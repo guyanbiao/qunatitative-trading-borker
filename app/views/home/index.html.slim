@@ -4,7 +4,7 @@ css:
     color: darkred
   }
 h5  #{@exchange.id} - #{@currency} 持仓情况
-- if @position.has_position?
+- if @exchange.credentials_set? && @exchange.has_position?
   table.table
     thead
       tr
