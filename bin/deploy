@@ -20,3 +20,7 @@ fi
 hash=`git log -1 --format="%H"`
 docker build -t registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash .
 docker push registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash
+
+echo build docker image success! version is $hash 🚗🚗🚗
+
+kubectl patch statefulset trading --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":"registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash"}]'

@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2021_06_05_224427) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "alert_logs", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -36,7 +39,7 @@ ActiveRecord::Schema.define(version: 2021_06_05_224427) do
   end
 
   create_table "order_executions", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "user_id"
     t.string "status"
     t.string "currency"
     t.string "direction"
@@ -56,20 +59,20 @@ ActiveRecord::Schema.define(version: 2021_06_05_224427) do
 
   create_table "usdt_standard_orders", force: :cascade do |t|
     t.string "contract_code"
-    t.integer "remote_order_id"
-    t.integer "client_order_id"
-    t.integer "user_id"
+    t.bigint "remote_order_id"
+    t.bigint "client_order_id"
+    t.bigint "user_id"
     t.decimal "open_price"
     t.decimal "close_price"
-    t.integer "volume"
+    t.bigint "volume"
     t.string "direction"
     t.string "offset"
     t.string "order_price_type"
     t.string "status"
     t.integer "remote_status"
-    t.integer "parent_order_id"
-    t.integer "order_execution_id"
-    t.integer "lever_rate"
+    t.bigint "parent_order_id"
+    t.bigint "order_execution_id"
+    t.bigint "lever_rate"
     t.decimal "profit"
     t.decimal "real_profit"
     t.decimal "trade_avg_price"
