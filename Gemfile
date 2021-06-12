@@ -83,3 +83,4 @@ gem 'devise'
 gem "administrate"
 gem "sidekiq"
 gem 'sidekiq-scheduler'
+gem 'pg'

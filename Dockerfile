@@ -13,6 +13,7 @@ RUN apk add --no-cache bash && \
 # install dependencies for application
 RUN apk -U add --no-cache \
 build-base \
+linux-headers \
 git \
 postgresql-dev \
 postgresql-client \
@@ -24,6 +25,9 @@ imagemagick \
 tzdata \
 sqlite-dev \
 less \
+readline-dev \
+zlib-dev \
+postgresql-dev \
 && rm -rf /home/cache/apk/* \
 && mkdir -p $APP_PATH 
 

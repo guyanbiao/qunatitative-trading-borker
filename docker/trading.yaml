@@ -1,0 +1,297 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: trading
+  namespace: default
+  uid: 47c52472-4b4e-4741-942d-7eb61542b050
+  resourceVersion: '6219596'
+  generation: 45
+  creationTimestamp: '2021-05-24T17:01:49Z'
+  labels:
+    app: trading
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"creationTimestamp":"2021-05-24T17:01:49Z","generation":33,"labels":{"app":"trading"},"managedFields":[{"apiVersion":"apps/v1","fieldsType":"FieldsV1","fieldsV1":{"f:metadata":{"f:labels":{".":{},"f:app":{}}},"f:spec":{"f:podManagementPolicy":{},"f:revisionHistoryLimit":{},"f:selector":{},"f:serviceName":{},"f:template":{"f:metadata":{"f:annotations":{".":{},"f:redeploy-timestamp":{}},"f:labels":{".":{},"f:app":{}}},"f:spec":{"f:containers":{"k:{\"name\":\"trading\"}":{".":{},"f:env":{".":{},"k:{\"name\":\"APP_PATH\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"BUNDLE_APP_CONFIG\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"BUNDLE_PATH\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"BUNDLE_SILENCE_ROOT_WARNING\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"GEM_HOME\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"LANG\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"RAILS_ENV\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"RAILS_LOG_TO_STDOUT\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"RAILS_PORT\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"REDIS_URL\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"ROLE\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"RUBY_DOWNLOAD_SHA256\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"RUBY_MAJOR\"}":{".":{},"f:name":{},"f:value":{}},"k:{\"name\":\"TMP_PATH\"}":{".":{},"f:name":{},"f:value":{}}},"f:image":{},"f:imagePullPolicy":{},"f:name":{},"f:ports":{".":{},"k:{\"containerPort\":3000,\"protocol\":\"TCP\"}":{".":{},"f:containerPort":{},"f:name":{},"f:protocol":{}}},"f:resources":{},"f:stdin":{},"f:terminationMessagePath":{},"f:terminationMessagePolicy":{},"f:tty":{},"f:volumeMounts":{".":{},"k:{\"mountPath\":\"/home/app/db/db_files\"}":{".":{},"f:mountPath":{},"f:name":{}},"k:{\"mountPath\":\"/home/app/public\"}":{".":{},"f:mountPath":{},"f:name":{}}}}},"f:dnsPolicy":{},"f:imagePullSecrets":{".":{},"k:{\"name\":\"trading\"}":{".":{},"f:name":{}}},"f:restartPolicy":{},"f:schedulerName":{},"f:securityContext":{},"f:terminationGracePeriodSeconds":{},"f:volumes":{".":{},"k:{\"name\":\"volume-1621875637231\"}":{".":{},"f:hostPath":{".":{},"f:path":{},"f:type":{}},"f:name":{}},"k:{\"name\":\"volume-trading\"}":{".":{},"f:name":{},"f:persistentVolumeClaim":{".":{},"f:claimName":{}}}}}},"f:updateStrategy":{"f:type":{}}}},"manager":"Apache-HttpClient","operation":"Update","time":"2021-06-06T07:54:24Z"},{"apiVersion":"apps/v1","fieldsType":"FieldsV1","fieldsV1":{"f:metadata":{"f:annotations":{".":{},"f:kubectl.kubernetes.io/last-applied-configuration":{}}},"f:spec":{"f:replicas":{}}},"manager":"kubectl-client-side-apply","operation":"Update","time":"2021-06-06T12:25:31Z"},{"apiVersion":"apps/v1","fieldsType":"FieldsV1","fieldsV1":{"f:status":{"f:collisionCount":{},"f:currentRevision":{},"f:observedGeneration":{},"f:replicas":{},"f:updateRevision":{}}},"manager":"kube-controller-manager","operation":"Update","time":"2021-06-06T12:27:45Z"}],"name":"trading","namespace":"default","selfLink":"/apis/apps/v1/namespaces/default/statefulsets/trading","uid":"47c52472-4b4e-4741-942d-7eb61542b050"},"spec":{"podManagementPolicy":"OrderedReady","replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"trading"}},"serviceName":"trading-svc","template":{"metadata":{"annotations":{"redeploy-timestamp":"1622982508763"},"creationTimestamp":null,"labels":{"app":"trading"}},"spec":{"containers":[{"env":[{"name":"LANG","value":"C.UTF-8"},{"name":"RUBY_MAJOR","value":"2.6"},{"name":"RUBY_DOWNLOAD_SHA256","value":"5db187882b7ac34016cd48d7032e197f07e4968f406b0690e20193b9b424841f"},{"name":"GEM_HOME","value":"/usr/local/bundle"},{"name":"BUNDLE_SILENCE_ROOT_WARNING","value":"1"},{"name":"BUNDLE_APP_CONFIG","value":"/usr/local/bundle"},{"name":"APP_PATH","value":"/home/app"},{"name":"BUNDLE_PATH","value":"/usr/local/bundle/gems"},{"name":"TMP_PATH","value":"/tmp/"},{"name":"RAILS_LOG_TO_STDOUT","value":"true"},{"name":"RAILS_PORT","value":"3000"},{"name":"RAILS_ENV","value":"production"},{"name":"REDIS_URL","value":"redis://10.126.0.51:6379/0"},{"name":"ROLE","value":"api"}],"image":"registry.cn-hangzhou.aliyuncs.com/jcd/trading:6545140927e1c7e030a5a53233c10ed91095176f","imagePullPolicy":"IfNotPresent","name":"trading","ports":[{"containerPort":3000,"name":"ruby","protocol":"TCP"}],"resources":{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"250m","memory":"512Mi"}},"stdin":true,"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","tty":true,"volumeMounts":[{"mountPath":"/home/app/public","name":"volume-1621875637231"},{"mountPath":"/home/app/db/db_files","name":"volume-trading"}]}],"dnsPolicy":"ClusterFirst","imagePullSecrets":[{"name":"trading"}],"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30,"volumes":[{"hostPath":{"path":"/root/app/public","type":""},"name":"volume-1621875637231"},{"name":"volume-trading","persistentVolumeClaim":{"claimName":"trading"}}]}},"updateStrategy":{"type":"RollingUpdate"}}}
+  managedFields:
+    - manager: kubectl-client-side-apply
+      operation: Update
+      apiVersion: apps/v1
+      time: '2021-06-06T12:37:52Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:kubectl.kubernetes.io/last-applied-configuration': {}
+        'f:spec':
+          'f:template':
+            'f:metadata':
+              'f:annotations':
+                'f:redeploy-timestamp': {}
+            'f:spec':
+              'f:containers':
+                'k:{"name":"trading"}':
+                  'f:resources':
+                    'f:limits':
+                      'f:memory': {}
+                    'f:requests':
+                      'f:cpu': {}
+                      'f:memory': {}
+    - manager: Apache-HttpClient
+      operation: Update
+      apiVersion: apps/v1
+      time: '2021-06-06T12:38:41Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:labels':
+            .: {}
+            'f:app': {}
+        'f:spec':
+          'f:podManagementPolicy': {}
+          'f:replicas': {}
+          'f:revisionHistoryLimit': {}
+          'f:selector': {}
+          'f:serviceName': {}
+          'f:template':
+            'f:metadata':
+              'f:annotations':
+                .: {}
+                'f:redeploy-timestamp': {}
+              'f:labels':
+                .: {}
+                'f:app': {}
+            'f:spec':
+              'f:containers':
+                'k:{"name":"trading"}':
+                  .: {}
+                  'f:env':
+                    .: {}
+                    'k:{"name":"APP_PATH"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"BUNDLE_APP_CONFIG"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"BUNDLE_PATH"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"BUNDLE_SILENCE_ROOT_WARNING"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"GEM_HOME"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"LANG"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"RAILS_ENV"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"RAILS_LOG_TO_STDOUT"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"RAILS_PORT"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"REDIS_URL"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"ROLE"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"RUBY_DOWNLOAD_SHA256"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"RUBY_MAJOR"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"TMP_PATH"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                  'f:image': {}
+                  'f:imagePullPolicy': {}
+                  'f:name': {}
+                  'f:ports':
+                    .: {}
+                    'k:{"containerPort":3000,"protocol":"TCP"}':
+                      .: {}
+                      'f:containerPort': {}
+                      'f:name': {}
+                      'f:protocol': {}
+                  'f:resources':
+                    .: {}
+                    'f:limits':
+                      'f:cpu': {}
+                      'f:memory': {}
+                    'f:requests':
+                      'f:cpu': {}
+                      'f:memory': {}
+                  'f:stdin': {}
+                  'f:terminationMessagePath': {}
+                  'f:terminationMessagePolicy': {}
+                  'f:tty': {}
+                  'f:volumeMounts':
+                    .: {}
+                    'k:{"mountPath":"/home/app/db/db_files"}':
+                      .: {}
+                      'f:mountPath': {}
+                      'f:name': {}
+                    'k:{"mountPath":"/home/app/public"}':
+                      .: {}
+                      'f:mountPath': {}
+                      'f:name': {}
+              'f:dnsPolicy': {}
+              'f:imagePullSecrets':
+                .: {}
+                'k:{"name":"trading"}':
+                  .: {}
+                  'f:name': {}
+              'f:restartPolicy': {}
+              'f:schedulerName': {}
+              'f:securityContext': {}
+              'f:terminationGracePeriodSeconds': {}
+              'f:volumes':
+                .: {}
+                'k:{"name":"volume-1621875637231"}':
+                  .: {}
+                  'f:hostPath':
+                    .: {}
+                    'f:path': {}
+                    'f:type': {}
+                  'f:name': {}
+                'k:{"name":"volume-trading"}':
+                  .: {}
+                  'f:name': {}
+                  'f:persistentVolumeClaim':
+                    .: {}
+                    'f:claimName': {}
+          'f:updateStrategy':
+            'f:type': {}
+    - manager: kube-controller-manager
+      operation: Update
+      apiVersion: apps/v1
+      time: '2021-06-12T07:42:50Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status':
+          'f:collisionCount': {}
+          'f:currentReplicas': {}
+          'f:currentRevision': {}
+          'f:observedGeneration': {}
+          'f:readyReplicas': {}
+          'f:replicas': {}
+          'f:updateRevision': {}
+          'f:updatedReplicas': {}
+  selfLink: /apis/apps/v1/namespaces/default/statefulsets/trading
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trading
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: trading
+      annotations:
+        redeploy-timestamp: '1622982508763'
+    spec:
+      volumes:
+        - name: volume-1621875637231
+          hostPath:
+            path: /root/app/public
+            type: ''
+        - name: volume-trading
+          persistentVolumeClaim:
+            claimName: trading
+      containers:
+        - name: trading
+          image: >-
+            registry.cn-hangzhou.aliyuncs.com/jcd/trading:6545140927e1c7e030a5a53233c10ed91095176f
+          ports:
+            - name: ruby
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: LANG
+              value: C.UTF-8
+            - name: RUBY_MAJOR
+              value: '2.6'
+            - name: RUBY_DOWNLOAD_SHA256
+              value: 5db187882b7ac34016cd48d7032e197f07e4968f406b0690e20193b9b424841f
+            - name: GEM_HOME
+              value: /usr/local/bundle
+            - name: BUNDLE_SILENCE_ROOT_WARNING
+              value: '1'
+            - name: BUNDLE_APP_CONFIG
+              value: /usr/local/bundle
+            - name: APP_PATH
+              value: /home/app
+            - name: BUNDLE_PATH
+              value: /usr/local/bundle/gems
+            - name: TMP_PATH
+              value: /tmp/
+            - name: RAILS_LOG_TO_STDOUT
+              value: 'true'
+            - name: RAILS_PORT
+              value: '3000'
+            - name: RAILS_ENV
+              value: production
+            - name: REDIS_URL
+              value: 'redis://192.168.232.22:6379/0'
+            - name: ROLE
+              value: api
+          resources:
+            limits:
+              cpu: 450m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          volumeMounts:
+            - name: volume-1621875637231
+              mountPath: /home/app/public
+            - name: volume-trading
+              mountPath: /home/app/db/db_files
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+          stdin: true
+          tty: true
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      imagePullSecrets:
+        - name: trading
+      schedulerName: default-scheduler
+  serviceName: trading-svc
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+  revisionHistoryLimit: 10
+status:
+  observedGeneration: 45
+  replicas: 1
+  readyReplicas: 1
+  currentReplicas: 1
+  updatedReplicas: 1
+  currentRevision: trading-6789fbfcb9
+  updateRevision: trading-6789fbfcb9
+  collisionCount: 0
+
