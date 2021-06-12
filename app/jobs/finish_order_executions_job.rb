@@ -10,6 +10,6 @@ class FinishOrderExecutionsJob
 
   private
   def executions
-    OrderExecution.where("created_at > ?", MAX_VALID_TIME.minutes.ago).unfinished
+    OrderExecution.where("created_at > ?", MAX_VALID_TIME.ago).unfinished
   end
 end
