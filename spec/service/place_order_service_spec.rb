@@ -9,11 +9,13 @@ RSpec.describe PlaceOrderService do
     stub_contract_balance
     stub_user_current_position
     stub_user_history
+    @trader = Trader.create(webhook_token: 'oo')
     @user = User.create!(
       email: 'foo@bar.com',
       password: 'abcdabcd',
       huobi_access_key: 'oo',
-      huobi_secret_key: 'ooo'
+      huobi_secret_key: 'ooo',
+      trader_id: @trader.id
     )
   end
 
@@ -23,7 +25,8 @@ RSpec.describe PlaceOrderService do
         currency: 'BTC',
         direction: 'buy',
         user_id: @user.id,
-        exchange_id: 'huobi'
+        exchange_id: 'huobi',
+        trader_id: @trader.id
       )
       exchange = Exchange::Huobi.new(@user, 'BTC')
       service = PlaceOrderService.new(@user, order_execution)
@@ -41,9 +44,9 @@ RSpec.describe PlaceOrderService do
       currency: 'BTC',
       direction: 'buy',
       user_id: @user.id,
-      exchange_id: 'huobi'
+      exchange_id: 'huobi',
+      trader_id: @trader.id
     )
-    exchange = Exchange::Huobi.new(@user, 'BTC')
     PlaceOrderService.new(@user, order_execution).execute
 
     # order
@@ -79,7 +82,8 @@ RSpec.describe PlaceOrderService do
       currency: 'BTC',
       direction: 'sell',
       user_id: @user.id,
-      exchange_id: 'huobi'
+      exchange_id: 'huobi',
+      trader_id: @trader.id
     )
 
     exchange = Exchange::Huobi.new(@user, 'BTC')
@@ -161,7 +165,8 @@ RSpec.describe PlaceOrderService do
         currency: 'BTC',
         direction: 'buy',
         user_id: @user.id,
-        exchange_id: 'huobi'
+        exchange_id: 'huobi',
+        trader_id: @trader.id
       )
       service = PlaceOrderService.new(@user, order_execution)
       expect(service.open_position_service.send(:open_order_percentage)).to eq(0.005.to_d)

@@ -1,15 +1,19 @@
-
+require 'sidekiq/testing'
 require 'rails_helper'
 
 RSpec.describe WebhooksController do
   let(:token) {'adjkladsjfkajsdfsfd'}
   it 'works' do
+    Sidekiq::Testing.inline!
+    @trader = Trader.create!(
+      webhook_token: token
+    )
     @user = User.create!(
       email: 'foo@bar.com',
       password: 'abcdabcd',
       huobi_access_key: 'oo',
       huobi_secret_key: 'ooo',
-      webhook_token: token
+      trader_id: @trader.id
     )
     allow_any_instance_of(WebhookHandlingService).to receive(:valid_ips).and_return(['127.0.0.1'])
     ActionController::Base.allow_forgery_protection = true
@@ -42,8 +46,8 @@ RSpec.describe WebhooksController do
     expect(order_execution.status).to eq('open_order_confirmed')
     alert_log = AlertLog.last
     expect(alert_log.ip_address).to eq('127.0.0.1')
-    expect(alert_log.source_type).to eq('user')
-    expect(alert_log.source_id).to eq(@user.id)
+    expect(alert_log.source_type).to eq('trader')
+    expect(alert_log.source_id).to eq(@trader.id)
     expect(alert_log.error_code).to eq(nil)
     expect(alert_log.error_message).to eq(nil)
     expect(alert_log.status).to eq('ok')

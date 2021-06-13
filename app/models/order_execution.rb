@@ -3,9 +3,8 @@ class OrderExecution < ApplicationRecord
   validates_presence_of :user_id, :exchange_id
   scope :unfinished, -> {where.not(status: 'open_order_confirmed')}
 
-  def user
-    User.find user_id
-  end
+  belongs_to :user
+  belongs_to :trader
 
   aasm column: :status do
     state :created, initial: true

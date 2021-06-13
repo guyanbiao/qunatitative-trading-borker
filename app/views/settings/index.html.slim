@@ -9,13 +9,13 @@ table.table
   tbody
     tr
       td
-        |*****#{current_user.huobi_access_key.to_s.last(3)}
+        |*****#{current_trader.huobi_access_key.to_s.last(3)}
       td
-        |*****#{current_user.huobi_secret_key.to_s.last(3)}
+        |*****#{current_trader.huobi_secret_key.to_s.last(3)}
       td
-        |*****#{current_user.bitget_access_key.to_s.last(3)}
+        |*****#{current_trader.bitget_access_key.to_s.last(3)}
       td
-        |*****#{current_user.bitget_secret_key.to_s.last(3)}
+        |*****#{current_trader.bitget_secret_key.to_s.last(3)}
 
 
 = form_for :settings, url: '/settings', html: {class: 'form'} do
@@ -43,7 +43,7 @@ table.table
 
 br
 h1 其他设置
-= form_for current_user, url: '/settings/update_percentage', method: :post, html: { class: 'form' } do |f|
+= form_for current_trader, url: '/settings/update_percentage', method: :post, html: { class: 'form' } do |f|
   div.form-group
     label 第一单下单倍数(默认0.005)
     = f.text_field :first_order_percentage, placeholder: '0.005', class: 'form-control'
@@ -52,10 +52,10 @@ h1 其他设置
     = f.text_field :lever_rate, placeholder: '100', class: 'form-control'
   div.form-group
     label 交易所
-    = f.select :exchange, options_for_select([%w[bitget bitget], %w[huobi huobi]], current_user.exchange_id), {}, class: 'form-control'
+    = f.select :exchange, options_for_select([%w[bitget bitget], %w[huobi huobi]], current_trader.exchange_id), {}, class: 'form-control'
   div.form-group
     label 是否接收 Tradingview 警报
-    = f.select :receiving_alerts, options_for_select([['接收', true], ['不接收', false]], current_user.receiving_alerts), {}, class: 'form-control'
+    = f.select :receiving_alerts, options_for_select([['接收', true], ['不接收', false]], current_trader.receiving_alerts), {}, class: 'form-control'
   div.form-group
     label webhook_token(用于trading view)
     = f.text_field :webhook_token, class: 'form-control'

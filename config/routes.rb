@@ -12,9 +12,14 @@ Rails.application.routes.draw do
 
       root to: "usdt_standard_orders#index"
     end
-  devise_for :users
+  devise_for :traders
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   resources :order_executions
+  resources :users do
+    member do
+      get :new_order
+    end
+  end
 
   resources :settings, only: [:index, :create] do
     collection do

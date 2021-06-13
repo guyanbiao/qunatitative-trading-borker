@@ -3,16 +3,16 @@ class SettingsController < ApplicationController
   end
 
   def create
-    current_user.update(create_params.select {|k, v| v.present?} )
+    current_trader.update(create_params.select {|k, v| v.present?} )
     flash[:notice] = '更新成功'
     redirect_back(fallback_location: '/settings')
   end
 
   def update_percentage
-    if current_user.update( percentage_params )
+    if current_trader.update( percentage_params )
       flash[:notice] = '更新成功'
     else
-      flash[:alert] = "#{current_user.errors.full_messages}"
+      flash[:alert] = "#{current_trader.errors.full_messages}"
     end
     redirect_back(fallback_location: '/settings')
   end

@@ -16,22 +16,15 @@ class WebhookHandlingService
   def execute
     create_webhook_log
     validate!
-    return unless user.receiving_alerts
-    exchange = user.exchange_class.new(user, currency)
-    order_execution = OrderExecution.create!(
-      user_id: user.id,
-      currency: currency,
-      direction: alert_params[:direction],
-      exchange_id: exchange.id
-    )
-    PlaceOrderService.new(user, order_execution).execute
+    return unless trader.receiving_alerts
+    BatchTradeService.new(trader: trader, currency: currency, direction: alert_params[:direction]).execute
   end
 
   def create_webhook_log
     AlertLog.create(
       content: alert_params.to_json,
-      source_type: 'user',
-      source_id: user&.id,
+      source_type: 'trader',
+      source_id: trader&.id,
       ip_address: ip_address,
       error_code: error_code,
       error_message: error_message,
@@ -41,8 +34,8 @@ class WebhookHandlingService
   end
 
   def ignored
-    return true unless user
-    !user.receiving_alerts
+    return true unless trader
+    !trader.receiving_alerts
   end
 
   def status
@@ -68,7 +61,7 @@ class WebhookHandlingService
           'invalid_currency'
         elsif !Setting.support_currencies.include?(currency)
           '005'
-        elsif !user
+        elsif !trader
           '003'
         else
           nil
@@ -86,8 +79,8 @@ class WebhookHandlingService
     alert_params[:ticker].sub(/USDT$/, '')
   end
 
-  def user
-    User.find_by(webhook_token: alert_params[:token])
+  def trader
+    Trader.find_by(webhook_token: alert_params[:token])
   end
 
 

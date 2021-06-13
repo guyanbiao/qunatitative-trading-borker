@@ -17,8 +17,9 @@ class PlaceOrderService
   DEFAULT_LEVER_RATE = 100
   MAX_CONTINUOUS_FAILURE_TIMES = 5
 
-  attr_reader :order_execution, :currency, :request_direction, :user, :exchange
+  attr_reader :order_execution, :currency, :request_direction, :user, :exchange, :trader
   def initialize(user, order_execution)
+    @trader = order_execution.trader
     @user = user
     @order_execution = order_execution
     @currency = order_execution.currency.upcase
@@ -61,11 +62,9 @@ class PlaceOrderService
   def handle_open_order_placed(client_order_id)
     usdt_standard_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
     remote_order_info = exchange.order_info(usdt_standard_order.remote_order_id)
-    OrderExecutionLog.create!(
-      order_execution_id: order_execution.id,
+    create_log(
       action: 'query_open_position',
-      response: remote_order_info.response,
-      user_id: user.id
+      response: remote_order_info.response
     )
     if remote_order_info.success?
       order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
@@ -89,11 +88,9 @@ class PlaceOrderService
   def handle_close_order_placed(client_order_id)
     usdt_standard_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
     remote_order_info = exchange.order_info(usdt_standard_order.remote_order_id)
-    OrderExecutionLog.create!(
-      order_execution_id: order_execution.id,
+    create_log(
       action: 'query_close_position',
-      response: remote_order_info.response,
-      user_id: user.id
+      response: remote_order_info.response
     )
     if remote_order_info.order_placed?
       ActiveRecord::Base.transaction do
@@ -137,11 +134,9 @@ class PlaceOrderService
 
   def close_position(client_order_id)
     result = ClosePositionService.new(user, client_order_id, exchange, order_execution_id: order_execution.id).execute
-    OrderExecutionLog.create!(
-      order_execution_id: order_execution.id,
+    create_log(
       action: 'close_position',
       response: result.response,
-      user_id: user.id
     )
 
     if result.success?
@@ -174,11 +169,9 @@ class PlaceOrderService
       lever_rate: lever_rate
     )
 
-    OrderExecutionLog.create!(
-      order_execution_id: order_execution.id,
+    create_log(
       action: 'open_position',
       response: result.response,
-      user_id: user.id
     )
     if result.success?
       ActiveRecord::Base.transaction do
@@ -235,5 +228,15 @@ class PlaceOrderService
 
   def exchange
     Exchange::Entry.find(order_execution.exchange_id).new(user, currency)
+  end
+
+  def create_log(params)
+    OrderExecutionLog.create!(
+      params.merge(
+        order_execution_id: order_execution.id,
+        user_id: user.id,
+        trader_id: trader.id
+      )
+    )
   end
 end

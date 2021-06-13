@@ -1,24 +1,25 @@
 class OrderExecutionsController < ApplicationController
   def index
-    @order_executions = OrderExecution.where(user_id: current_user.id).order(created_at: :desc).page(params[:page]).per(per_page)
+    @order_executions = OrderExecution.where(user_id: current_trader.id).order(created_at: :desc).page(params[:page]).per(per_page)
   end
 
   def new
+    @user
     @default_option = params[:symbol].present? ? params[:symbol].upcase : Setting.support_currencies.first
-    exchange = current_user.exchange_class.new(current_user, @default_option)
+    exchange = current_trader.exchange_class.new(current_trader, @default_option)
     unless exchange.credentials_set?
       flash[:alert] = "请先设置 #{exchange.id} 交易所的密钥"
       redirect_to(settings_path)
       return
     end
-    @ops = OpenPositionService.new(current_user, @default_option, exchange)
+    @ops = OpenPositionService.new(@user, @default_option, exchange)
     @order_execution = OrderExecution.new(currency: @default_option)
   end
 
   def create
-    execution = OrderExecution.create!(create_params.merge(user_id: current_user.id, exchange_id: current_user.exchange_id))
-    exchange = current_user.exchange_class.new(current_user, create_params[:currency])
-    PlaceOrderService.new(current_user, execution).execute
+    execution = OrderExecution.create!(create_params.merge(user_id: current_trader.id, exchange_id: current_trader.exchange_id))
+    exchange = current_trader.exchange_class.new(current_trader, create_params[:currency])
+    PlaceOrderService.new(current_trader, execution).execute
     redirect_to order_executions_path
   end
 
