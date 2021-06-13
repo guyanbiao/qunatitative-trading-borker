@@ -27,6 +27,10 @@ class Exchange::Bitget::CurrentPositionResponse < Exchange::Bitget::BaseResponse
     valid_positions.length > 0
   end
 
+  def currency
+    first_order['symbol'].match(/cmt_(.*)usdt/)[1].to_s.upcase
+  end
+
   private
   def first_order
     valid_positions.first

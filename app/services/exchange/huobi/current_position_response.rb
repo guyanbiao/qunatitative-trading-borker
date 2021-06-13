@@ -24,6 +24,11 @@ class Exchange::Huobi::CurrentPositionResponse < Exchange::Huobi::BaseResponse
     first_order['cost_open']
   end
 
+  def currency
+    first_order['symbol']
+  end
+
+
   private
 
   def first_order

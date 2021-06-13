@@ -53,6 +53,7 @@ RSpec.describe Exchange::Bitget do
     expect(result.volume).to eq(1)
     expect(result.direction).to eq('buy')
     expect(result.has_position?).to eq(true)
+    expect(result.currency).to eq('ETH')
   end
 
   it '.has_position' do

@@ -1,6 +1,6 @@
 class UsdtStandardOrdersController < ApplicationController
   def close_position
-    exchange = current_user.exchange_class.new(current_user, 'BTC')
+    exchange = current_user.exchange_class.new(current_user, params[:currency].upcase)
     result = ClosePositionService.new(current_user, generate_order_id, exchange).execute
     if result.success?
       flash[:notice] = '平仓成功'

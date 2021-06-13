@@ -1,6 +1,6 @@
 class HomeController < ApplicationController
   def index
-    @currency = current_user.order_executions.last&.currency || Setting.support_currencies.first
+    @currency = get_currency
     @exchange = current_user.get_exchange(@currency)
     if @exchange.credentials_set?
       @position =  @exchange.current_position
@@ -9,5 +9,10 @@ class HomeController < ApplicationController
       @position = nil
       @orders = []
     end
+  end
+
+  private
+  def get_currency
+    params[:currency] || current_user.order_executions.last&.currency || Setting.support_currencies.first
   end
 end
