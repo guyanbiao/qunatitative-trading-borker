@@ -36,20 +36,7 @@ class OpenPositionService
   end
 
   def open_order_percentage
-    @open_order_percentage ||=
-      begin
-        return default_percentage unless exchange.has_history?
-
-        if exchange.last_order_profit?
-          default_percentage
-        else
-          if continuous_fail_times > MAX_CONTINUOUS_FAILURE_TIMES
-            default_percentage
-          else
-            (continuous_fail_times + 1) *  default_percentage
-          end
-        end
-      end
+    @open_order_percentage ||= default_percentage
   end
 
   def contract_price
@@ -70,10 +57,6 @@ class OpenPositionService
 
   def default_percentage
     @default_percentage ||= user.first_order_percentage || DEFAULT_PERCENTAGE
-  end
-
-  def continuous_fail_times
-    exchange.continuous_fail_times
   end
 
   def last_finished_close_order
