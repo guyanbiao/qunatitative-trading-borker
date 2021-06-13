@@ -23,4 +23,4 @@ docker push registry.cn-hangzhou.aliyuncs.com/jcd/trading:$hash
 
 echo build docker image success! version is $hash 🚗🚗🚗
 
-kubectl patch statefulset trading --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":"registry.cn-hangzhou.aliyuncs.com/jcd/trading:${hash}"}]'
+kubectl patch statefulset trading --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":"registry.cn-hangzhou.aliyuncs.com/jcd/trading:'${hash}'"}]'
