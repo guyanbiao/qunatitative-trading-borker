@@ -35,11 +35,12 @@ div.container
         div.form-group
           labe 币种
           = f.select :currency, options_for_select(Setting.support_currencies, @order_execution.currency), {}, class: 'custom-select', id: 'currency'
+          = f.hidden_field :user_id
         br
         = f.submit '提交', class: 'btn btn-primary'
 
 javascript:
   $("#currency").change(function () {
     console.log($(this).val())
-    window.location ="/order_executions/new?symbol=" + $(this).val()
+    window.location ="/order_executions/new?user_id=#{@user.id}&symbol=" + $(this).val()
   });

@@ -22,7 +22,7 @@ h5  #{@exchange.id} - #{@currency} 持仓情况
         td #{@position.open_avg_price}
         td #{@position.lever_rate}
         td
-          = link_to '平仓', close_position_usdt_standard_orders_path(currency: @position.currency), method: :post, class: 'btn btn-primary'
+          = link_to '平仓', close_position_usdt_standard_orders_path(currency: @position.currency, user_id: @user.id), method: :post, class: 'btn btn-primary'
 - else
   h6 暂无持仓
 

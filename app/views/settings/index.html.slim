@@ -1,58 +1,5 @@
-h1 API key 设置
-table.table
-  thead
-    tr
-      td huobi_access_key
-      td huobi_secret_key
-      td bitget_access_key
-      td bitget_secret_key
-  tbody
-    tr
-      td
-        |*****#{current_trader.huobi_access_key.to_s.last(3)}
-      td
-        |*****#{current_trader.huobi_secret_key.to_s.last(3)}
-      td
-        |*****#{current_trader.bitget_access_key.to_s.last(3)}
-      td
-        |*****#{current_trader.bitget_secret_key.to_s.last(3)}
-
-
-= form_for :settings, url: '/settings', html: {class: 'form'} do
-  h3 huobi
-  div.form-group
-    label access_key
-    = text_field_tag :huobi_access_key, nil, placeholder: 'access_key', class: 'form-control'
-  div.form-group
-    label secret_key
-    = text_field_tag :huobi_secret_key, nil, placeholder: 'secret_key', class: 'form-control'
-
-  h3 bitget
-  div.form-group
-    label access_key
-    = text_field_tag :bitget_access_key, nil, placeholder: 'bitget_access_key', class: 'form-control'
-  div.form-group
-    label secret_key
-    = text_field_tag :bitget_secret_key, nil, placeholder: 'bitget_secret_key', class: 'form-control'
-  div.form-group
-    label bitget_pass_phrase
-    = text_field_tag :bitget_pass_phrase, nil, placeholder: 'bitget_pass_phrase', class: 'form-control'
-
-
-  = submit_tag '提交', class: 'btn btn-primary'
-
-br
 h1 其他设置
 = form_for current_trader, url: '/settings/update_percentage', method: :post, html: { class: 'form' } do |f|
-  div.form-group
-    label 第一单下单倍数(默认0.005)
-    = f.text_field :first_order_percentage, placeholder: '0.005', class: 'form-control'
-  div.form-group
-    label 杠杆率(默认100)
-    = f.text_field :lever_rate, placeholder: '100', class: 'form-control'
-  div.form-group
-    label 交易所
-    = f.select :exchange, options_for_select([%w[bitget bitget], %w[huobi huobi]], current_trader.exchange_id), {}, class: 'form-control'
   div.form-group
     label 是否接收 Tradingview 警报
     = f.select :receiving_alerts, options_for_select([['接收', true], ['不接收', false]], current_trader.receiving_alerts), {}, class: 'form-control'

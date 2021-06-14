@@ -16,5 +16,5 @@ table.table
         td #{o.exchange_id}
         td #{o.direction}
         td
-          = link_to '详情', order_execution_path(o.id), class: 'btn'
+          = link_to '详情', order_execution_path(o.id, user_id: @user.id), class: 'btn'
 = paginate @order_executions

@@ -8,6 +8,8 @@ class User < ApplicationRecord
   validates_uniqueness_of :webhook_token, allow_blank: true
   validates_length_of :webhook_token, minimum: 10, allow_blank: true
 
+  has_many :order_executions
+
   def exchange_class
     Exchange::Entry.exchanges[exchange_id]
   end

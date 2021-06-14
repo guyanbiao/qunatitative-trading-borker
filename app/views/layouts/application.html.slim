@@ -27,10 +27,6 @@ html
             li.nav-item
               = link_to "用户管理", users_path, class: 'nav-link'
             li.nav-item
-              = link_to "手动下单", new_order_execution_path, class: 'nav-link'
-            li.nav-item
-              = link_to "交易日志", order_executions_path, class: 'nav-link'
-            li.nav-item
               = link_to '系统设置', settings_path, class: 'nav-link'
             li.nav-item
               = link_to "登出", destroy_trader_session_path, method: :delete, class: 'nav-link'
