@@ -17,15 +17,29 @@ class UsersController < ApplicationController
     @order_execution = OrderExecution.new(currency: @default_option)
   end
 
+  def new
+    @user = current_trader.users.new
+  end
+
   def show
     @currency = get_currency
     @exchange = @user.get_exchange(@currency)
+    @orders = @user.history_orders.order(order_placed_at: :desc)
     if @exchange.credentials_set?
       @position =  @exchange.current_position
-      @orders = @exchange.closed_orders
     else
       @position = nil
-      @orders = []
+    end
+  end
+
+  def create
+    @user = User.new(create_params.merge(trader_id: current_trader.id))
+    @user.password = 'gkdd932kasdfiopz@55'
+    if @user.save
+      redirect_to users_path
+    else
+      flash[:alert] = @user.errors.full_messages
+      render action: :new
     end
   end
 
@@ -38,7 +52,7 @@ class UsersController < ApplicationController
     else
       flash[:alert] = @user.errors.full_messages
     end
-    redirect_to(user_path(@user.id))
+    redirect_to(users_path)
   end
 
   private
@@ -55,6 +69,36 @@ class UsersController < ApplicationController
   end
 
   def update_params
-    params.require(:user).permit(:first_order_percentage, :lever_rate, :webhook_token, :exchange, :receiving_alerts, :huobi_access_key, :huobi_secret_key, :bitget_access_key, :bitget_secret_key, :bitget_pass_phrase)
+    params.require(:user).permit(:first_order_percentage,
+                                 :lever_rate,
+                                 :webhook_token,
+                                 :exchange,
+                                 :receiving_alerts,
+                                 :huobi_access_key,
+                                 :huobi_secret_key,
+                                 :bitget_access_key,
+                                 :bitget_secret_key,
+                                 :bitget_pass_phrase,
+                                 :email,
+                                 :phone_number,
+                                 :name,
+    )
+  end
+
+  def create_params
+    params.require(:user).permit(:first_order_percentage,
+                                 :lever_rate,
+                                 :webhook_token,
+                                 :exchange,
+                                 :receiving_alerts,
+                                 :huobi_access_key,
+                                 :huobi_secret_key,
+                                 :bitget_access_key,
+                                 :bitget_secret_key,
+                                 :bitget_pass_phrase,
+                                 :email,
+                                 :phone_number,
+                                 :name,
+    )
   end
 end

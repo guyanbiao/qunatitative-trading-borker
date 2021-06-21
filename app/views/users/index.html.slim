@@ -1,8 +1,15 @@
+div
+
+h3
+  |用户列表
+  = link_to '新增用户', new_user_path, class: 'btn btn-primary mb-2 float-right'
 table.table
   thead
     tr
       th id
       th email
+      th 电话
+      th 用户名
       th 操作
   tbody
     - @users.each do |u|
@@ -10,6 +17,8 @@ table.table
         td
           = link_to u.id, user_path(u.id)
         td #{u.email}
+        td #{u.phone_number}
+        td #{u.name}
         td
           = link_to '当前持仓', user_path(u.id), class: 'btn btn-primary'
           = link_to '编辑', edit_user_path(u.id), class: 'btn btn-primary ml-1'

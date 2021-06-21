@@ -32,7 +32,7 @@ h5  #{@exchange.id} - #{@currency} 历史订单
 table.table
   thead
     tr
-      th symbol
+      th 币种
       th 成交数量
       th 盈利
       th 时间
@@ -40,11 +40,4 @@ table.table
       th 成交均价
 
   tbody
-    - @orders.each do |o|
-      tr
-        td #{o.symbol}
-        td #{o.closed_volume}
-        td #{o.real_profit}
-        td #{o.created_at}
-        td #{o.fee}
-        td #{o.trade_avg_price}
+    = render partial: 'history_orders/index', locals: {orders: @orders}

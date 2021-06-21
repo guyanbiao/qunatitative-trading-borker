@@ -47,9 +47,9 @@ class BitGetApiClient
     request('GET', path, params)
   end
 
-  def history(symbol:)
+  def history(symbol:, pageIndex: 1)
     path = '/api/swap/v3/order/history'
-    params = {symbol: symbol, pageIndex: 1, pageSize: 100, createDate: 90}
+    params = {symbol: symbol, pageIndex: pageIndex, pageSize: 100, createDate: 90}
     request('GET', path, params)
   end
 

@@ -1,0 +1,21 @@
+table.table
+  thead
+    tr
+      th 币种
+      th 成交数量
+      th 盈利
+      th 时间
+      th 手续费
+      th 成交均价
+
+  tbody
+    - orders.each do |o|
+      tr
+        td #{o.currency}
+        td #{o.volume}
+        td #{o.profit}
+        td #{o.order_placed_at}
+        td #{o.fees}
+        td #{o.trade_avg_price}
+
+= paginate orders

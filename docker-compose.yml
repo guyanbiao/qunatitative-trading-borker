@@ -27,4 +27,13 @@ services:
     command: ['rails', 'server', '-p', '3000', '-b', '0.0.0.0']
     environment:
       RAILS_ENV: development
+  db:
+    image: "postgres:13.2-alpine"
+    environment:
+      POSTGRES_USER: "${PGUSER:-postgres}"
+      POSTGRES_PASSWORD: "${PGPASSWORD:-postgres}"
+    ports:
+      - "${PGPORT:-5432}:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
 

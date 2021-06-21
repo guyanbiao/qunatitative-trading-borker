@@ -39,4 +39,8 @@ class Exchange::Bitget::OrderInfoResponse < Exchange::Bitget::BaseResponse
   def created_at
     Time.at(data['createTime'].to_f / 1000)
   end
+
+  def order_id
+    data['order_id']
+  end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_13_024437) do
+ActiveRecord::Schema.define(version: 2021_06_20_230912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,25 @@ ActiveRecord::Schema.define(version: 2021_06_13_024437) do
     t.string "error_message"
     t.string "status"
     t.boolean "ignored"
+  end
+
+  create_table "history_orders", force: :cascade do |t|
+    t.string "symbol"
+    t.decimal "profit"
+    t.string "exchange"
+    t.string "currency"
+    t.bigint "volume"
+    t.datetime "order_placed_at"
+    t.decimal "fees"
+    t.string "remote_order_id"
+    t.decimal "trade_avg_price"
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_placed_at"], name: "index_history_orders_on_order_placed_at"
+    t.index ["remote_order_id"], name: "index_history_orders_on_remote_order_id", unique: true
+    t.index ["user_id", "order_placed_at"], name: "index_history_orders_on_user_id_and_order_placed_at"
+    t.index ["user_id"], name: "index_history_orders_on_user_id"
   end
 
   create_table "order_execution_logs", force: :cascade do |t|
@@ -119,6 +138,8 @@ ActiveRecord::Schema.define(version: 2021_06_13_024437) do
     t.string "exchange"
     t.boolean "receiving_alerts", default: true
     t.bigint "trader_id"
+    t.string "name"
+    t.string "phone_number"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

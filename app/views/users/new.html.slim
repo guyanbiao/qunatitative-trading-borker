@@ -1,0 +1,5 @@
+= form_for @user, html: { class: 'form' } do |f|
+  div.form-group
+    label Email
+    = f.text_field :email, placeholder: 'email', class: 'form-control'
+  = render partial: 'edit.html.slim', locals: {f: f}

@@ -92,11 +92,24 @@ class Exchange::Bitget
   def closed_orders
     @closed_orders ||=
       begin
-        client.history(symbol: symbol)['data'].select do |x|
-          x['status'] == OrderStatus::ORDER_FINISHED_STATUS &&
-            (x['type'] == OrderType::CLOSE_BUY || x['type'] == OrderType::CLOSE_SELL)
-        end.map {|x| Exchange::Bitget::OrderInfoResponse.new({'data' => x})}
+        convert_to_closed_order(client.history(symbol: symbol))
       end
+  end
+
+  def sync_full_history
+    pageIndex = 1
+    results = []
+    while pageIndex < 1000 do
+      result = client.history(symbol: symbol, pageIndex: pageIndex)
+      if result['data'].length  == 0
+        break
+      end
+      convert_to_closed_order(result).each do |response|
+        yield response
+      end
+      pageIndex += 1
+    end
+    results
   end
 
   private
@@ -145,5 +158,12 @@ class Exchange::Bitget
 
   def symbol
     "cmt_#{currency.downcase}usdt"
+  end
+
+  def convert_to_closed_order(response)
+    response['data'].select do |x|
+      x['status'] == OrderStatus::ORDER_FINISHED_STATUS &&
+        (x['type'] == OrderType::CLOSE_BUY || x['type'] == OrderType::CLOSE_SELL)
+    end.map {|x| Exchange::Bitget::OrderInfoResponse.new({'data' => x})}
   end
 end

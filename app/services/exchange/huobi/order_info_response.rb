@@ -40,6 +40,10 @@ class Exchange::Huobi::OrderInfoResponse < Exchange::Huobi::BaseResponse
     Time.at(currency_data['create_date'].to_f / 1000)
   end
 
+  def order_id
+    data['order_id']
+  end
+
   private
   def currency_data
     data.first

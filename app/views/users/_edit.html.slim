@@ -1,0 +1,40 @@
+div.form-group
+  label 手机号码
+  = f.text_field :phone_number, placeholder: '手机', class: 'form-control'
+div.form-group
+  label 用户名
+  = f.text_field :name, placeholder: '用户名', class: 'form-control'
+h3 huobi
+div.form-group
+  label access_key
+  = f.text_field :huobi_access_key, placeholder: 'access_key', class: 'form-control'
+div.form-group
+  label secret_key
+  = f.text_field :huobi_secret_key, placeholder: 'secret_key', class: 'form-control'
+
+h3 bitget
+div.form-group
+  label access_key
+  = f.text_field :bitget_access_key, placeholder: 'bitget_access_key', class: 'form-control'
+div.form-group
+  label secret_key
+  = f.text_field :bitget_secret_key, placeholder: 'bitget_secret_key', class: 'form-control'
+div.form-group
+  label bitget_pass_phrase
+  = f.text_field :bitget_pass_phrase, placeholder: 'bitget_pass_phrase', class: 'form-control'
+div.form-group
+  label 第一单下单倍数(默认0.005)
+  = f.text_field :first_order_percentage, placeholder: '0.005', class: 'form-control'
+div.form-group
+  label 杠杆率(默认100)
+  = f.text_field :lever_rate, placeholder: '100', class: 'form-control'
+div.form-group
+  label 交易所
+  = f.select :exchange, options_for_select([%w[bitget bitget], %w[huobi huobi]], @user.exchange_id), {}, class: 'form-control'
+div.form-group
+  label 是否接收 Tradingview 警报
+  = f.select :receiving_alerts, options_for_select([['接收', true], ['不接收', false]], @user.receiving_alerts), {}, class: 'form-control'
+div.form-group
+  label webhook_token(用于trading view)
+  = f.text_field :webhook_token, class: 'form-control'
+= f.submit '提交', class: 'btn btn-primary'

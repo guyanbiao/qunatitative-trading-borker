@@ -60,6 +60,26 @@ module BitgetHelper
     )
   end
 
+  def stub_bitget_history_first_100
+    stub_request(:get, "https://bitget.test.com/api/swap/v3/order/history").
+      with(query: {createDate: 90, pageIndex: 1, pageSize: 100, symbol: 'cmt_btcusdt'}).
+      to_return(
+      status: 200,
+      body: file_fixture('bitget/order_history.json'),
+      headers: {}
+    )
+  end
+
+  def stub_bitget_history_second_100
+    stub_request(:get, "https://bitget.test.com/api/swap/v3/order/history").
+      with(query: {createDate: 90, pageIndex: 2, pageSize: 100, symbol: 'cmt_btcusdt'}).
+      to_return(
+        status: 200,
+        body: [].to_json,
+        headers: {}
+      )
+  end
+
   def stub_bitget_current_price
     r = Regexp.new(
       "#{host}/api/swap/v3/market/ticker\\?.*"

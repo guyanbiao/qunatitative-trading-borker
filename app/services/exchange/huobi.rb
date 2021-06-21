@@ -76,7 +76,7 @@ class Exchange::Huobi < Exchange::Base
   end
 
   def credentials_set?
-    user.huobi_access_key && user.huobi_secret_key
+    user.huobi_access_key.present? && user.huobi_secret_key.present?
   end
 
   def closed_orders

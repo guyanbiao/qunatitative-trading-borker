@@ -9,6 +9,7 @@ class User < ApplicationRecord
   validates_length_of :webhook_token, minimum: 10, allow_blank: true
 
   has_many :order_executions
+  has_many :history_orders
 
   def exchange_class
     Exchange::Entry.exchanges[exchange_id]
@@ -24,5 +25,13 @@ class User < ApplicationRecord
 
   def order_executions
     OrderExecution.where(user_id: id)
+  end
+
+  def supported_exchanges
+    exchanges = []
+
+    exchanges << 'huobi' if huobi_access_key.present? && huobi_secret_key.present?
+    exchanges << 'bitget' if bitget_access_key.present? && bitget_pass_phrase.present? && bitget_secret_key.present?
+    exchanges
   end
 end
