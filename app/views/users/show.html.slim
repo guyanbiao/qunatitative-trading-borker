@@ -29,15 +29,4 @@ h5  #{@exchange.id} - #{@currency} 持仓情况
 br
 h5  #{@exchange.id} - #{@currency} 历史订单
 
-table.table
-  thead
-    tr
-      th 币种
-      th 成交数量
-      th 盈利
-      th 时间
-      th 手续费
-      th 成交均价
-
-  tbody
-    = render partial: 'history_orders/index', locals: {orders: @orders}
+= render partial: 'history_orders/index', locals: {orders: @orders}
