@@ -1,3 +1,6 @@
 SweepPendingWithdrawalsJob:
   class: FinishOrderExecutionsJob
   cron: "*/20 * * * * *"
+SyncHistoryOrderJob:
+  class: SyncHistoryOrderJob
+  cron: "0 */30 * * * *"

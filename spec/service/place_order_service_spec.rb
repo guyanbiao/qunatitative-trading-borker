@@ -9,7 +9,7 @@ RSpec.describe PlaceOrderService do
     stub_contract_balance
     stub_user_current_position
     stub_user_history
-    @trader = Trader.create(webhook_token: 'oo')
+    @trader = Trader.create!(webhook_token: 'oo', email: 'a@b.com', password: 'oooppp')
     @user = User.create!(
       email: 'foo@bar.com',
       password: 'abcdabcd',

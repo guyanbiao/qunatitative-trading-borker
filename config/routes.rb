@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   require 'sidekiq/web'
   require 'sidekiq-scheduler/web'
 
-  authenticate :user do
+  authenticate :trader do
     mount Sidekiq::Web => '/sidekiq'
   end
 

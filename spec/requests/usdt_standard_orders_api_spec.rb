@@ -8,7 +8,6 @@ RSpec.describe UsdtStandardOrdersController, type: :request do
       huobi_access_key: 'oo',
       huobi_secret_key: 'ooo'
     )
-    sign_in(@user)
   end
 
   it 'works' do

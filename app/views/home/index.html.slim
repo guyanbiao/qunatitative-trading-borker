@@ -1,11 +1,14 @@
 = form_tag('/', method: :get)
   .row.mb-2.text-muted
+    .col-sm 用户
     .col-sm 交易所
     .col-sm 币种
     .col-sm 开始时间
     .col-sm 结束时间
     .col-sm
   .row
+    .form-group.col-sm
+      = select_tag('user_id', options_for_select(@users.map { |x| [x.name || x.email, x.id] }, params[:user_id]), class: 'form-control', prompt: '全部')
     .form-group.col-sm
       = select_tag('exchange', options_for_select(Exchange::Entry.exchanges.keys.map {|x| [x, x]}, params[:exchange]), class: 'form-control', prompt: '全部')
     .form-group.col-sm

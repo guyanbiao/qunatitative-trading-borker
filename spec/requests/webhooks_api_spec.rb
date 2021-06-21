@@ -6,7 +6,7 @@ RSpec.describe WebhooksController do
   it 'works' do
     Sidekiq::Testing.inline!
     @trader = Trader.create!(
-      webhook_token: token
+      webhook_token: token, email: 'a@b.com', password: 'oooppp'
     )
     @user = User.create!(
       email: 'foo@bar.com',
