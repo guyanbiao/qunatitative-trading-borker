@@ -30,7 +30,7 @@ class User < ApplicationRecord
   def supported_exchanges
     exchanges = []
 
-    exchanges << 'huobi' if huobi_access_key.present? && huobi_secret_key.present?
+    # exchanges << 'huobi' if huobi_access_key.present? && huobi_secret_key.present?
     exchanges << 'bitget' if bitget_access_key.present? && bitget_pass_phrase.present? && bitget_secret_key.present?
     exchanges
   end
