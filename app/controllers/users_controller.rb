@@ -24,7 +24,7 @@ class UsersController < ApplicationController
   def show
     @currency = get_currency
     @exchange = @user.get_exchange(@currency)
-    @orders = @user.history_orders.order(order_placed_at: :desc)
+    @orders = @user.history_orders.order(order_placed_at: :desc).page(params[:page]).per(per_page)
     if @exchange.credentials_set?
       @position =  @exchange.current_position
     else
@@ -100,5 +100,9 @@ class UsersController < ApplicationController
                                  :phone_number,
                                  :name,
     )
+  end
+
+  def per_page
+    10
   end
 end
