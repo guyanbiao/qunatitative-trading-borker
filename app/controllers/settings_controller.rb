@@ -18,7 +18,7 @@ class SettingsController < ApplicationController
   end
 
   def percentage_params
-    params.require(:user).permit(:first_order_percentage, :lever_rate, :webhook_token, :exchange, :receiving_alerts)
+    params.require(:trader).permit(:webhook_token, :receiving_alerts)
   end
 
   def create_params
