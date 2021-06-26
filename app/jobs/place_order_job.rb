@@ -3,6 +3,11 @@ class PlaceOrderJob
 
   def perform(order_execution_id)
     order_execution = OrderExecution.find(order_execution_id)
-    PlaceOrderService.new(order_execution.user, order_execution).execute
+    10.times do
+      PlaceOrderService.new(order_execution.user, order_execution).execute
+      break if order_execution.reload.status == 'open_order_confirmed'
+
+      sleep 0.5
+    end
   end
 end
