@@ -30,7 +30,6 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV['DATABASE'] %>
-  user: <%= ENV['DB_USER'] %>
-  password: <%= ENV['DB_PASSWORD'] %>
-  host: 192.168.67.84
+  database: trading_develop
+  user: postgres
+  password: postgres

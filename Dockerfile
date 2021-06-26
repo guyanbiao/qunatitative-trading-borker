@@ -53,7 +53,7 @@ ADD db/migrate /home/app/db/migrate
 ADD db/schema.rb /home/app/db/schema.rb
 ADD db/seeds.rb /home/app/db/seeds.rb
 ADD config /home/app/config
-ADD config/database.yml /home/app/config/database.yml
+ADD docker/database.yml /home/app/config/database.yml
 ADD config/redis.yml /home/app/config/redis.yml
 ADD config/sidekiq_scheduler.yml /home/app/config/sidekiq_scheduler.yml
 ADD app /home/app/app

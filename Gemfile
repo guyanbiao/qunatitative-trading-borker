@@ -76,7 +76,6 @@ group :test do
   gem 'simplecov', require: false
 end
 
-gem 'webpacker', '~> 5.0'
 gem 'kaminari'
 gem 'rails-settings-cached'
 gem 'devise'
