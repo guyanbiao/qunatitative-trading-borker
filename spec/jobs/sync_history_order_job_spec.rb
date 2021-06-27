@@ -1,3 +1,4 @@
+require 'sidekiq/testing'
 require 'rails_helper'
 
 RSpec.describe SyncHistoryOrderJob do
@@ -12,10 +13,11 @@ RSpec.describe SyncHistoryOrderJob do
   }
 
   it 'works' do
+    Sidekiq::Testing.inline!
     Setting.support_currencies = %w[BTC]
     stub_bitget_history_first_100
     stub_bitget_history_second_100
-    SyncHistoryOrderJob.new.perform
+    SyncHistoryOrderJob.perform_async
 
     expect(HistoryOrder.count).to eq(2)
     first_order = HistoryOrder.first

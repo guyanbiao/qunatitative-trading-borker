@@ -1,4 +1,6 @@
 class SyncHistoryOrderJob
+  include Sidekiq::Worker
+
   def perform
     User.all.each do |u|
       u.supported_exchanges.each do |exchange_id|
