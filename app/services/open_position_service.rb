@@ -1,6 +1,5 @@
 class OpenPositionService
   DEFAULT_LEVER_RATE = 100
-  DEFAULT_PERCENTAGE = 0.005.to_d
   MAX_CONTINUOUS_FAILURE_TIMES = 5
   attr_reader :user, :currency, :exchange
 
@@ -36,7 +35,7 @@ class OpenPositionService
   end
 
   def open_order_percentage
-    @open_order_percentage ||= default_percentage
+    @open_order_percentage ||= TradingStrategyService.new(trader: user.trader, exchange: exchange).open_order_percentage
   end
 
   def contract_price
@@ -53,10 +52,6 @@ class OpenPositionService
 
   def contract_code
     "#{currency}-USDT"
-  end
-
-  def default_percentage
-    @default_percentage ||= user.first_order_percentage || DEFAULT_PERCENTAGE
   end
 
   def last_finished_close_order

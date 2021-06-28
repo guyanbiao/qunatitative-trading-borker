@@ -61,7 +61,6 @@ RSpec.describe PlaceOrderService do
   end
 
   it 'has open order' do
-    expect(PlaceOrderService::DEFAULT_PERCENTAGE).to eq(0.005.to_d)
     first_order = UsdtStandardOrder.create!(
       volume: 3,
       client_order_id: 3323,

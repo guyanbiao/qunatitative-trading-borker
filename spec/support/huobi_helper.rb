@@ -74,6 +74,15 @@ module HuobiHelper
       headers: {}
     )
   end
+
+  def stub_user_history_with_loss
+    r = Regexp.new( "https://huobi.test.com/linear-swap-api/v1/swap_cross_matchresults\\?.*" )
+    stub_request(:post, r).to_return(
+      status: 200,
+      body: file_fixture('swap_cross_matchresults_with_loss.json'),
+      headers: {}
+    )
+  end
 end
 
 RSpec.configure { |config| config.include HuobiHelper }

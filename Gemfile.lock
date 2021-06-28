@@ -120,6 +120,8 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
     docile (1.4.0)
+    enumerize (2.4.0)
+      activesupport (>= 3.2)
     erubi (1.10.0)
     et-orbi (1.2.4)
       tzinfo
@@ -342,6 +344,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   database_cleaner-active_record
   devise
+  enumerize (~> 2.4.0)
   httparty
   jbuilder (~> 2.5)
   kaminari
