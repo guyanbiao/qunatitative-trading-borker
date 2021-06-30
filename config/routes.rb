@@ -37,5 +37,6 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'health', to: 'health#check'
   root to: 'home#index'
 end
