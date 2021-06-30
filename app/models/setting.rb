@@ -16,4 +16,5 @@ class Setting < RailsSettings::Base
   field :support_currencies, type: :array, default: ['BTC', 'ETH']
   field :default_trading_strategy, type: :string, default: 'tier'
   field :max_consecutive_fail_times, type: :integer, default: 5
+  field :valid_tradingview_webhook_ips, type: :array, default: %w[52.89.214.238 34.212.75.30 54.218.53.128 52.32.178.7]
 end
