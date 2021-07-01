@@ -58,6 +58,8 @@ RSpec.describe PlaceOrderService do
     # order execution
     order_execution = OrderExecution.last
     expect(order_execution.status).to eq('open_order_confirmed')
+    log = OrderExecutionLog.find_by(action: 'open_position')
+    expect(log.meta).to eq({"balance"=>"68.839155724155396568", "lever_rate"=>100, "contract_price"=>"38.5672", "open_order_percentage"=>"0.005"})
   end
 
   it 'has open order' do

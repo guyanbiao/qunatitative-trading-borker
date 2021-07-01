@@ -171,6 +171,12 @@ class PlaceOrderService
     create_log(
       action: 'open_position',
       response: result.response,
+      meta: {
+        balance: open_position_service.balance,
+        lever_rate: open_position_service.lever_rate,
+        open_order_percentage: open_position_service.open_order_percentage,
+        contract_price: open_position_service.contract_price
+      }
     )
     if result.success?
       ActiveRecord::Base.transaction do
