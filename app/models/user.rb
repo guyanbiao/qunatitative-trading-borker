@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :order_executions
   has_many :history_orders
   belongs_to :trader, optional: true
+  scope :enable, -> {where(enable: true)}
 
   def exchange_class
     Exchange::Entry.exchanges[exchange_id]

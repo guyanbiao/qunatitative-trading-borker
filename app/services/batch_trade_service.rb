@@ -7,7 +7,7 @@ class BatchTradeService
   end
 
   def execute
-    trader.users.each do |user|
+    trader.users.enable.each do |user|
       exchange = user.exchange_class.new(trader, currency)
       order_execution = OrderExecution.create!(
         trader_id: trader.id,

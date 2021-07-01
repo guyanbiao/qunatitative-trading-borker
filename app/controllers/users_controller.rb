@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :new_order]
+  before_action :set_user, only: [:show, :edit, :update, :new_order, :disable, :enable]
 
   def index
-    @users = current_trader.users
+    @users = current_trader.users.order(:created_at)
   end
 
   def new_order
@@ -53,6 +53,16 @@ class UsersController < ApplicationController
       flash[:alert] = @user.errors.full_messages
     end
     redirect_to(users_path)
+  end
+
+  def disable
+    @user.update(enable: false)
+    redirect_to users_path
+  end
+
+  def enable
+    @user.update(enable: true)
+    redirect_to users_path
   end
 
   private

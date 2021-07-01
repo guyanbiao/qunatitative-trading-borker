@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   resources :users do
     member do
       get :new_order
+      post :disable
+      post :enable
     end
   end
 

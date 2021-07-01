@@ -1,5 +1,13 @@
-div
-
+css:
+  .user-false {
+    background-color: lightgrey;
+    color: gray !important;
+  }
+  .user-false .btn-primary {
+    background-color: lightgrey;
+    color: gray !important;
+    border: gray;
+  }
 h3
   |用户列表
   = link_to '新增用户', new_user_path, class: 'btn btn-primary mb-2 float-right'
@@ -13,7 +21,7 @@ table.table
       th 操作
   tbody
     - @users.each do |u|
-      tr
+      tr class="user-#{u.enable}"
         td
           = link_to u.id, user_path(u.id)
         td #{u.email}
@@ -24,3 +32,7 @@ table.table
           = link_to '编辑', edit_user_path(u.id), class: 'btn btn-primary ml-1'
           = link_to '手动下单', new_order_execution_path(user_id: u.id), class: 'btn btn-primary ml-1'
           = link_to '交易日志', order_executions_path(user_id: u.id), class: 'btn btn-primary ml-1'
+          - if u.enable
+            = link_to '停用', disable_user_path(u.id), class: 'btn btn-danger ml-1', method: :post
+          - else
+            = link_to '启用', enable_user_path(u.id), class: 'btn btn-danger ml-1', method: :post
