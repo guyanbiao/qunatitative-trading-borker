@@ -10,6 +10,7 @@ class User < ApplicationRecord
 
   has_many :order_executions
   has_many :history_orders
+  has_many :user_tags
   belongs_to :trader, optional: true
   scope :enable, -> {where(enable: true)}
 
@@ -35,5 +36,9 @@ class User < ApplicationRecord
     # exchanges << 'huobi' if huobi_access_key.present? && huobi_secret_key.present?
     exchanges << 'bitget' if bitget_access_key.present? && bitget_pass_phrase.present? && bitget_secret_key.present?
     exchanges
+  end
+
+  def tags
+    user_tags.map(&:name).join(",")
   end
 end

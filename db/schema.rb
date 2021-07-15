@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_01_025217) do
+ActiveRecord::Schema.define(version: 2021_07_01_034504) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,6 +126,15 @@ ActiveRecord::Schema.define(version: 2021_07_01_025217) do
     t.index ["client_order_id"], name: "index_usdt_standard_orders_on_client_order_id", unique: true
     t.index ["remote_order_id"], name: "index_usdt_standard_orders_on_remote_order_id"
     t.index ["user_id"], name: "index_usdt_standard_orders_on_user_id"
+  end
+
+  create_table "user_tags", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_user_tags_on_name"
+    t.index ["user_id"], name: "index_user_tags_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|

@@ -19,6 +19,7 @@ class UsersController < ApplicationController
 
   def new
     @user = current_trader.users.new
+    @current_tags = UserTag.distinct.pluck(:name)
   end
 
   def show
@@ -36,6 +37,7 @@ class UsersController < ApplicationController
     @user = User.new(create_params.merge(trader_id: current_trader.id))
     @user.password = 'gkdd932kasdfiopz@55'
     if @user.save
+      update_tags
       redirect_to users_path
     else
       flash[:alert] = @user.errors.full_messages
@@ -44,10 +46,12 @@ class UsersController < ApplicationController
   end
 
   def edit
+    @current_tags = UserTag.distinct.pluck(:name)
   end
 
   def update
     if @user.update(update_params)
+      update_tags
       flash[:notice] = '更新成功'
     else
       flash[:alert] = @user.errors.full_messages
@@ -95,6 +99,10 @@ class UsersController < ApplicationController
     )
   end
 
+  def tags_params
+    params.require(:user).permit(:tags)[:tags]
+  end
+
   def create_params
     params.require(:user).permit(:first_order_percentage,
                                  :lever_rate,
@@ -114,5 +122,15 @@ class UsersController < ApplicationController
 
   def per_page
     10
+  end
+
+  def update_tags
+    tags = tags_params.to_s.split(",")
+    tags.each do |name|
+      @user.user_tags.where(name: name).first_or_create!
+    end
+    (@user.user_tags.map(&:name) - tags).each do |name|
+      @user.user_tags.find_by(name: name).destroy!
+    end
   end
 end

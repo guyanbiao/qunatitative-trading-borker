@@ -4,6 +4,13 @@ div.form-group
 div.form-group
   label 用户名
   = f.text_field :name, placeholder: '用户名', class: 'form-control'
+div.form-group
+  label 标签
+  = f.text_field :tags, placeholder: '用户名', class: 'form-control', id: 'tags'
+
+  span 现有标签:
+  - @current_tags.map do |x|
+      label.user-tags.badge.badge-warning.m-1 #{x}
 h3 huobi
 div.form-group
   label access_key
@@ -32,3 +39,9 @@ div.form-group
   label 交易所
   = f.select :exchange, options_for_select([%w[bitget bitget], %w[huobi huobi]], @user.exchange_id), {}, class: 'form-control'
 = f.submit '提交', class: 'btn btn-primary'
+
+javascript:
+  $('#tags').tagsInput();
+  $('.user-tags').click(function(e) {
+      $('#tags').addTag($(this).text());
+  })
