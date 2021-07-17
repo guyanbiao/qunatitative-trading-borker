@@ -5,7 +5,7 @@ class PlaceOrderJob
     order_execution = OrderExecution.find(order_execution_id)
     10.times do
       PlaceOrderService.new(order_execution.user, order_execution).execute
-      break if order_execution.reload.status == 'open_order_confirmed'
+      break if order_execution.reload.status == 'done'
 
       sleep 0.5
     end

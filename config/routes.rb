@@ -29,6 +29,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :batch_executions
+
   post "webhooks/alert/:token", to: 'webhooks#alert'
 
 

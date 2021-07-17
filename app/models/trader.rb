@@ -3,4 +3,5 @@ class Trader < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :users
+  has_many :manual_batch_executions
 end

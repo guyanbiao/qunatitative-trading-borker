@@ -32,6 +32,8 @@ html
             li.nav-item
               = link_to "用户管理", users_path, class: 'nav-link'
             li.nav-item
+              = link_to "批量操作", batch_executions_path, class: 'nav-link'
+            li.nav-item
               = link_to '系统设置', settings_path, class: 'nav-link'
             li.nav-item
               = link_to "登出", destroy_trader_session_path, method: :delete, class: 'nav-link'

@@ -61,7 +61,7 @@ RSpec.describe WebhooksController do
       expect(order.remote_order_id).to eq(845810451073155072)
       # order execution
       order_execution = OrderExecution.last
-      expect(order_execution.status).to eq('open_order_confirmed')
+      expect(order_execution.status).to eq('done')
       alert_log = AlertLog.last
       expect(alert_log.ip_address).to eq('127.0.0.1')
       expect(alert_log.source_type).to eq('trader')

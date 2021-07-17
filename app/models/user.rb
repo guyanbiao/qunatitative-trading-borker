@@ -41,4 +41,8 @@ class User < ApplicationRecord
   def tags
     user_tags.map(&:name).join(",")
   end
+
+  def name_or_email
+    name.present? ? name : email
+  end
 end

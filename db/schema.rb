@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_01_034504) do
+ActiveRecord::Schema.define(version: 2021_07_16_234826) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,15 @@ ActiveRecord::Schema.define(version: 2021_07_01_034504) do
     t.index ["user_id"], name: "index_history_orders_on_user_id"
   end
 
+  create_table "manual_batch_executions", force: :cascade do |t|
+    t.string "action"
+    t.bigint "trader_id"
+    t.jsonb "action_params"
+    t.bigint "user_ids", array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "order_execution_logs", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "order_execution_id"
@@ -68,6 +77,8 @@ ActiveRecord::Schema.define(version: 2021_07_01_034504) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "exchange_id"
     t.bigint "trader_id"
+    t.bigint "batch_execution_id"
+    t.string "action"
     t.index ["user_id"], name: "index_order_executions_on_user_id"
   end
 

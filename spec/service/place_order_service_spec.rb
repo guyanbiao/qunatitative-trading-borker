@@ -26,7 +26,8 @@ RSpec.describe PlaceOrderService do
         direction: 'buy',
         user_id: @user.id,
         exchange_id: 'huobi',
-        trader_id: @trader.id
+        trader_id: @trader.id,
+        action: 'open_position'
       )
       exchange = Exchange::Huobi.new(@user, 'BTC')
       service = PlaceOrderService.new(@user, order_execution)
@@ -45,7 +46,8 @@ RSpec.describe PlaceOrderService do
       direction: 'buy',
       user_id: @user.id,
       exchange_id: 'huobi',
-      trader_id: @trader.id
+      trader_id: @trader.id,
+      action: 'open_position'
     )
     PlaceOrderService.new(@user, order_execution).execute
 
@@ -57,7 +59,7 @@ RSpec.describe PlaceOrderService do
     expect(order.remote_order_id).to eq(845810451073155072)
     # order execution
     order_execution = OrderExecution.last
-    expect(order_execution.status).to eq('open_order_confirmed')
+    expect(order_execution.status).to eq('done')
     log = OrderExecutionLog.find_by(action: 'open_position')
     expect(log.meta).to eq({"balance"=>"68.839155724155396568", "lever_rate"=>100, "contract_price"=>"38.5672", "open_order_percentage"=>"0.005"})
   end
@@ -84,7 +86,8 @@ RSpec.describe PlaceOrderService do
       direction: 'sell',
       user_id: @user.id,
       exchange_id: 'huobi',
-      trader_id: @trader.id
+      trader_id: @trader.id,
+      action: 'open_position'
     )
 
     exchange = Exchange::Huobi.new(@user, 'BTC')
@@ -167,7 +170,8 @@ RSpec.describe PlaceOrderService do
         direction: 'buy',
         user_id: @user.id,
         exchange_id: 'huobi',
-        trader_id: @trader.id
+        trader_id: @trader.id,
+        action: 'open_position'
       )
       service = PlaceOrderService.new(@user, order_execution)
       expect(service.open_position_service.send(:open_order_percentage)).to eq(0.005.to_d)

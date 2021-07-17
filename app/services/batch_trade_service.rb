@@ -14,7 +14,8 @@ class BatchTradeService
         user_id: user.id,
         currency: currency,
         direction: direction,
-        exchange_id: exchange.id
+        exchange_id: exchange.id,
+        action: 'open_position'
       )
       PlaceOrderJob.perform_async(order_execution.id)
     end

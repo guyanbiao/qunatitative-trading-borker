@@ -1,0 +1,23 @@
+h3 订单记录
+table.table
+  thead
+    tr
+      th ID
+      th status
+      th 币对
+      th 交易所
+      th 类型
+      th 用户
+      th 操作
+  tbody
+    - @order_executions.each do |o|
+      tr
+        td #{o.id}
+        td #{o.status}
+        td #{o.currency}
+        td #{o.exchange_id}
+        td #{o.action}
+        td #{o.user.name_or_email}
+        td
+          = link_to '详情', order_execution_path(o.id, user_id: o.user_id), class: 'btn'
+= paginate @order_executions

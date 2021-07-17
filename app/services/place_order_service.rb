@@ -72,13 +72,14 @@ class PlaceOrderService
         remote_status: remote_order_info.status
       )
       if remote_order_info.order_placed?
-        order_execution.open_confirm
+        order_execution.finish
         order_execution.save!
       end
     end
   end
 
   def handle_close_order_finished
+    return if order_execution.action == 'close_position'
     validate_remote_order_count
 
     open_position
@@ -93,7 +94,11 @@ class PlaceOrderService
     )
     if remote_order_info.order_placed?
       ActiveRecord::Base.transaction do
-        order_execution.close_finish
+        if order_execution.action == 'close_position'
+          order_execution.finish
+        else
+          order_execution.close_finish
+        end
         order_execution.save!
         close_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
         close_order.finish
@@ -141,8 +146,8 @@ class PlaceOrderService
     if result.success?
       order_execution.close
       order_execution.save!
-      handle_close_order_placed(client_order_id)
     end
+    handle_close_order_placed(client_order_id)
   end
 
   def generate_order_id

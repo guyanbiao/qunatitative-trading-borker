@@ -1,10 +1,12 @@
 class OrderExecution < ApplicationRecord
+  extend Enumerize
   include AASM
-  validates_presence_of :user_id, :exchange_id
-  scope :unfinished, -> {where.not(status: 'open_order_confirmed')}
+  validates_presence_of :user_id, :exchange_id, :action
+  scope :unfinished, -> {where.not(status: 'done')}
 
   belongs_to :user
   belongs_to :trader
+  enumerize :action, in: [:open_position, :close_position]
 
   aasm column: :status do
     state :created, initial: true
@@ -12,7 +14,7 @@ class OrderExecution < ApplicationRecord
     state :close_order_placed
     state :close_order_finished
     state :open_order_placed
-    state :open_order_confirmed
+    state :done
 
     event :close do
       transitions from: :created, to: :close_order_placed
@@ -30,8 +32,8 @@ class OrderExecution < ApplicationRecord
       transitions from: [:new_order, :close_order_finished], to: :open_order_placed
     end
 
-    event :open_confirm do
-      transitions from: :open_order_placed, to: :open_order_confirmed
+    event :finish do
+      transitions from: [:open_order_placed, :close_order_placed], to: :done
     end
   end
 

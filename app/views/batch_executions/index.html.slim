@@ -1,0 +1,19 @@
+= link_to '批量操作', new_batch_execution_path, class: 'btn btn-primary'
+div.m-3
+
+table.table
+  thead
+    tr
+      th ID
+      th 类型
+      th 参数
+      th 操作
+  tbody
+    - @batch_executions.each do |b|
+      tr
+        td #{b.id}
+        td #{b.action}
+        td #{b.action_params}
+        td
+          = link_to '详情', batch_execution_path(b.id), class: 'btn'
+= paginate @batch_executions

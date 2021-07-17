@@ -1,0 +1,15 @@
+= form_for :batch_execution, url: '/batch_executions' do |f|
+  div.form-group
+    label 动作
+    = f.select :action, [['开仓', 'open_position'], ['平仓', 'close_position']], {}, class: 'custom-select', placeholder: '方向'
+  div.form-group
+    label 方向
+    = f.select :direction, [['开多', 'buy'], ['开空', 'sell']], {}, class: 'custom-select', placeholder: '方向'
+  div.form-group
+    label 币种
+    = f.select :currency, options_for_select(Setting.support_currencies), {}, class: 'custom-select', id: 'currency'
+  - @users.each do |u|
+    div.form-group
+      = check_box_tag 'batch_execution[users][]', u.id, false, id: "user-#{u.id}"
+      label.m-1 for="user-#{u.id}" #{u.name.present? ? u.name : u.email}
+  = f.submit '提交', class: 'btn btn-primary'
