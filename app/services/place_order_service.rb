@@ -85,6 +85,18 @@ class PlaceOrderService
     open_position
   end
 
+  def execute_close_order_placed
+    ActiveRecord::Base.transaction do
+      if order_execution.action == 'close_position'
+        order_execution.finish
+      else
+        order_execution.close_finish
+      end
+      order_execution.save!
+    end
+    handle_close_order_finished
+  end
+
   def handle_close_order_placed(client_order_id)
     usdt_standard_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
     remote_order_info = exchange.order_info(usdt_standard_order.remote_order_id)
@@ -93,25 +105,17 @@ class PlaceOrderService
       response: remote_order_info.response
     )
     if remote_order_info.order_placed?
-      ActiveRecord::Base.transaction do
-        if order_execution.action == 'close_position'
-          order_execution.finish
-        else
-          order_execution.close_finish
-        end
-        order_execution.save!
-        close_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
-        close_order.finish
-        close_order.assign_attributes(
-          profit: remote_order_info.profit,
-          real_profit: remote_order_info.real_profit,
-          trade_avg_price: remote_order_info.trade_avg_price,
-          fee: remote_order_info.fee,
-          remote_status: remote_order_info.status
-        )
-        close_order.save!
-      end
-      handle_close_order_finished
+      close_order = UsdtStandardOrder.find_by(client_order_id: client_order_id)
+      close_order.finish
+      close_order.assign_attributes(
+        profit: remote_order_info.profit,
+        real_profit: remote_order_info.real_profit,
+        trade_avg_price: remote_order_info.trade_avg_price,
+        fee: remote_order_info.fee,
+        remote_status: remote_order_info.status
+      )
+      close_order.save!
+      execute_close_order_placed
     end
   end
 
@@ -138,16 +142,20 @@ class PlaceOrderService
 
   def close_position(client_order_id)
     result = ClosePositionService.new(user, client_order_id, exchange, order_execution_id: order_execution.id).execute
-    create_log(
-      action: 'close_position',
-      response: result.response,
-    )
+    if result
+      create_log(
+        action: 'close_position',
+        response: result.response,
+        )
 
-    if result.success?
-      order_execution.close
-      order_execution.save!
+      if result.success?
+        order_execution.close
+        order_execution.save!
+      end
+      handle_close_order_placed(client_order_id)
+    else
+      execute_close_order_placed
     end
-    handle_close_order_placed(client_order_id)
   end
 
   def generate_order_id

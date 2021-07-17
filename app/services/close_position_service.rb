@@ -11,6 +11,10 @@ class ClosePositionService
 
 
   def execute
+    unless current_position.has_position?
+      return
+    end
+
     opposite_direction = remote_order.direction == 'buy'  ? 'sell' : 'buy'
 
     result = exchange.place_order(
@@ -57,16 +61,19 @@ class ClosePositionService
     'opponent'
   end
 
+  def current_position
+    @current_position ||= exchange.current_position
+  end
+
   def remote_order
     @remote_order ||= begin
-      ro = exchange.current_position
       RemoteUsdtStandardOrder.new(
         id: nil,
         user_id: user.id,
         contract_code: exchange.contract_code,
-        lever_rate: ro.lever_rate,
-        volume: ro.volume,
-        direction: ro.direction
+        lever_rate: current_position.lever_rate,
+        volume: current_position.volume,
+        direction: current_position.direction
       )
     end
   end

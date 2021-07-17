@@ -33,7 +33,7 @@ class OrderExecution < ApplicationRecord
     end
 
     event :finish do
-      transitions from: [:open_order_placed, :close_order_placed], to: :done
+      transitions from: [:new_order, :open_order_placed, :close_order_placed], to: :done
     end
   end
 
