@@ -42,6 +42,7 @@ Rails.application.routes.draw do
   end
 
   get 'weixin/callback', to: 'weixin#callback'
+  get 'weixin/redirect', to: 'weixin#redirect'
 
   get 'health', to: 'health#check'
   root to: 'home#index'

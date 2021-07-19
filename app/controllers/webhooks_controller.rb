@@ -7,7 +7,6 @@ class WebhooksController < ApplicationController
     Rails.logger.info("[alert_log headers] remote_ip=#{request.headers['X-Forwarded-For']}")
     Rails.logger.info("[alert_log full headers] headers=#{request.headers.to_h}")
 
-
     begin
       WebhookHandlingService.new(alert_params, request).execute
       render inline: "success"
