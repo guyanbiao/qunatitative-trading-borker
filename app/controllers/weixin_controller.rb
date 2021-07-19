@@ -3,6 +3,6 @@ class WeixinController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def callback
-    render inline: params[:signature]
+    render inline: params[:echostr]
   end
 end
