@@ -84,3 +84,4 @@ gem "sidekiq"
 gem 'sidekiq-scheduler'
 gem 'pg'
 gem 'enumerize', '~> 2.4.0'
+gem 'weixin_authorize'
