@@ -11,7 +11,6 @@ class WeixinController < ApplicationController
     puts result
     Rails.logger.info("weixin_result #{result.to_s}")
     redirect_to wexin_new_bind_path(wx_open_id: result['result']['openid'])
-    render json: result
   end
 
   def new_bind
