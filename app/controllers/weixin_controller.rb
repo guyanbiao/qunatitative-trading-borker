@@ -12,7 +12,7 @@ class WeixinController < ApplicationController
     Rails.logger.info("weixin_result #{result.result}")
     if result.is_ok?
       WeixinAuthorize::ResultHandler
-      redirect_to wexin_new_bind_path(wx_open_id: result.result['result']['openid'])
+      redirect_to wexin_new_bind_path(wx_open_id: result.result['openid'])
     else
       render json: result
     end
