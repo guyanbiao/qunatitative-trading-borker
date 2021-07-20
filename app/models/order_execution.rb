@@ -34,6 +34,9 @@ class OrderExecution < ApplicationRecord
 
     event :finish do
       transitions from: [:new_order, :open_order_placed, :close_order_placed], to: :done
+      after do
+        WeixinNotificationJob.perform_async(self.id)
+      end
     end
   end
 
