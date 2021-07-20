@@ -43,6 +43,8 @@ Rails.application.routes.draw do
 
   get 'weixin/callback', to: 'weixin#callback'
   get 'weixin/redirect', to: 'weixin#redirect'
+  get 'weixin/new_bind', to: 'weixin#new_bind', as: 'wexin_new_bind'
+  post 'weixin/bind', to: 'weixin#bind', as: 'weixin_bind'
 
   get 'health', to: 'health#check'
   root to: 'home#index'

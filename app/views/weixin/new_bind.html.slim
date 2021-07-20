@@ -1,0 +1,17 @@
+h2 Log in
+= form_for(@trader, url: weixin_bind_path) do |f|
+  .field
+    = f.label :email
+    br
+    = f.email_field :email, autofocus: true, autocomplete: "email"
+  .field
+    = f.label :password
+    br
+    = f.password_field :password, autocomplete: "current-password"
+  .field
+    = f.check_box :remember_me
+    = f.label :remember_me
+  .field
+    = hidden_field_tag :wx_open_id, params[:wx_open_id]
+  .actions
+    = f.submit "Log in"
