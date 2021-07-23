@@ -18,6 +18,6 @@ class WeixinNotificationJob
 
   private
   def template_id
-    'le24glVnukIRUGQo2Updfq_UF_miTqCrBKN6yV-HUmc'
+    'QO9iXn91g9nt-oiwwnVajUR4cHeiB5zY_sLexxd-LzU'
   end
 end
