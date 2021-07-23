@@ -31,11 +31,10 @@ class WeixinController < ApplicationController
      return
    end
 
-   if trader.update(wx_open_id: params.permit(:wx_open_id)[:wx_open_id])
-     render inline: 'success'
-   else
+   unless trader.update(wx_open_id: params.permit(:wx_open_id)[:wx_open_id])
      flash[:alert] = trader.errors.full_messages.join(',')
      redirect_back(fallback_location: '/')
+     return
    end
   end
 
