@@ -51,7 +51,9 @@ class PlaceOrderService
   end
 
   def validate
-    # TODO execution handle timeout
+    if Time.now - order_execution.created_at > OrderExecution::MAX_VALID_TIME
+      raise 'unable to execute'
+    end
   end
 
   def validate_remote_order_count

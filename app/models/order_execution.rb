@@ -1,4 +1,6 @@
 class OrderExecution < ApplicationRecord
+  MAX_VALID_TIME = 5.minutes
+
   extend Enumerize
   include AASM
   validates_presence_of :user_id, :exchange_id, :action
