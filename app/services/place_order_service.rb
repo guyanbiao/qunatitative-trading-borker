@@ -121,8 +121,21 @@ class PlaceOrderService
     end
   end
 
+  def same_direction?
+    exchange.current_position.direction == order_execution.direction
+  end
+
   def handle_created
     if has_position?
+      if same_direction?
+        create_log(
+          action: 'skip_execution_same_direction',
+          response: {}
+        )
+        order_execution.finish
+        order_execution.save!
+        return
+      end
       client_order_id = generate_order_id
       close_position(client_order_id)
     else

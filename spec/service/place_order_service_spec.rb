@@ -64,6 +64,22 @@ RSpec.describe PlaceOrderService do
     expect(log.meta).to eq({"balance"=>"68.839155724155396568", "lever_rate"=>100, "contract_price"=>"38.5672", "open_order_percentage"=>"0.005"})
   end
 
+  it 'works' do
+    order_execution = OrderExecution.create!(
+      currency: 'BTC',
+      direction: 'buy',
+      user_id: @user.id,
+      exchange_id: 'huobi',
+      trader_id: @trader.id,
+      action: 'open_position'
+    )
+
+    PlaceOrderService.new(@user, order_execution).execute
+    
+    log = OrderExecutionLog.last
+    expect(log.action).to eq('skip_execution_same_direction')
+  end
+
   it 'has open order' do
     first_order = UsdtStandardOrder.create!(
       volume: 3,
